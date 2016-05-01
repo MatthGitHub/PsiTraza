@@ -1,6 +1,6 @@
 <?php
 include('config.php');
-    // Primero comprobamos que ningún campo esté vacío y que todos los campos existan.
+    // Primero comprobamos que ningï¿½n campo estï¿½ vacï¿½o y que todos los campos existan.
     if(isset($_POST['nombre']) && !empty($_POST['nombre']) &&
     isset($_POST['direccion']) && !empty($_POST['direccion']) &&
     isset ($_POST['email']) && !empty($_POST['email']) &&
@@ -10,10 +10,10 @@ include('config.php');
 		$nombre = htmlentities($_POST['nombre']);
 		$mail = htmlentities($_POST['email']);
 		$telefono = $_POST['telefono'];
-		
+
         $link = mysql_connect ($dbhost, $dbusername, $dbuserpass);
         mysql_select_db($dbname,$link);
-		
+
 		$queEmp = "SELECT nombre FROM proveedores WHERE nombre='$nombre'";
 		$resEmp = mysql_query($queEmp, $link) or die(mysql_error());
 		$totEmp = mysql_num_rows($resEmp);
@@ -21,7 +21,7 @@ include('config.php');
 		echo "Nombre de proveedor no disponible";
 		exit();
 		}
-		
+
 		$queEmp = "SELECT correo FROM proveedores WHERE correo='$mail'";
 		$resEmp = mysql_query($queEmp, $link) or die(mysql_error());
 		$totEmp = mysql_num_rows($resEmp);
@@ -29,7 +29,7 @@ include('config.php');
 		echo "El mail ingresado no esta disponible";
 		exit();
 		}
-		
+
         // Con esta sentencia SQL insertaremos los datos en la base de datos
         mysql_query("INSERT INTO proveedores (nombre,direccion,telefono,correo)
         VALUES ('{$nombre}','{$direccion}','{$telefonos}','{$mail}')",$link);
@@ -39,7 +39,7 @@ include('config.php');
 
         if(!empty($my_error)) {
 
-            header ("Location: registrarse.php?errordat");
+            header ("Location: registrar_proveedores.php?errordat");
 
         } else {
 
@@ -49,8 +49,7 @@ include('config.php');
 
     } else {
 
-         header ("Location: registrarse.php?errordb");
-
+         header ("Location: registrar_proveedores.php?errordb");
     }
 
 ?>

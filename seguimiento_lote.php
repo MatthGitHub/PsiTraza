@@ -4,6 +4,17 @@ if($_SESSION["logeado"] != "SI"){
 header ("Location: index.php");
 exit;
 }
+
+$nlote = $_GET['idLote'];
+
+// Conectar a la base de datos
+mysql_connect ($dbhost, $dbusername, $dbuserpass);
+mysql_select_db($dbname) or die('No se puede seleccionar la base de datos');
+
+$ingresos = mysql_query("SELECT * FROM ingresos WHERE idLote = '{$nlote}'") or die(mysql_error());
+$depositos = mysql_query("SELECT * FROM depositos WHERE idLote = '{$nlote}'") or die(mysql_error());
+$entregas = mysql_query("SELECT * FROM entregas WHERE idLote = '{$nlote}'") or die(mysql_error());
+$procesos = mysql_query("SELECT * FROM procesos WHERE idLote = '{$nlote}'") or die(mysql_error());
 ?>
 
 <!DOCTYPE html>
@@ -56,7 +67,6 @@ exit;
 			  ?>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-               <li><a href=""> <?php echo $_SESSION["s_username"]; ?> </a></li>
               <li><a href="">Fecha:
               	<?php
               	// Establecer la zona horaria predeterminada a usar. Disponible desde PHP 5.1
@@ -71,15 +81,56 @@ exit;
       </div>
       <!-- Main component for a primary marketing message or call to action -->
       <div class="jumbotron">
-        <h1>Sistema de Trazabilidad</h1>
-        <p>
-			<a class="btn btn-lg btn-primary" href="nuevo_lote.php" role="button">Nuevo Lote &raquo;</a>
-        </p>
-        <p>
-			<a class="btn btn-lg btn-primary" href="buscar_lote.php" role="button">Seguimiento Lote &raquo;</a>
-        </p>
+        <div class="row">
+          <h3> Seguimiento de Lote <?php echo $nlote; ?> </h3>
+        </div>
       </div>
-
+      <div class="jumbotron">
+        <div class="row">
+                  <?php if (mysql_num_rows($ingresos)>0){ ?>
+                    <table class="table table-hover">
+                      <h3> Ingreso </h3>
+                        <thead>
+                          	  <th> Fecha </th>
+                              <th> Cantidad </th>
+                          </thead>
+                          <tbody>
+                          	<?php while($arrayIngresos = mysql_fetch_array($ingresos)){ ?>
+                              <tr class="success">
+                                  <td> <?php echo $arrayIngresos['fecha']; ?> </td>
+                                  <td> <?php echo $arrayIngresos['cantidad']; ?> </td>
+                              </tr>
+                              <?php } ?>
+                          </tbody>
+                    <?php } ?>
+                  </table>
+              </div>
+              </div>
+                    <?php if (mysql_num_rows($depositos)>0){ ?>
+                  <div class="jumbotron">
+                    <div class="row">
+                      <table class="table table-hover">
+                          <thead>
+                                <th> Nº Lote </th>
+                                <th> Cantidad </th>
+                                <th> Fecha </th>
+                                <th> Estado </th>
+                                <th> Tipo </th>
+                            </thead>
+                            <tbody>
+                              <?php while($arrayDepositos = mysql_fetch_array($depositos)){ ?>
+                                <tr class="success">
+                                    <td> <?php echo $depositos['fecha']; ?> </td>
+                                    <td> <?php echo $depositos['cantidad']; ?> </td>
+                                    <td> <?php echo $depositos['tipoProceso']; ?> </td>
+                                    <td> <?php echo $depositos['vencimiento']; ?> </td>
+                                </tr>
+                                <?php } ?>
+                            </tbody>
+                      <?php } ?>
+                    </table>
+      </div>
+    </div>
     </div> <!-- /container -->
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->

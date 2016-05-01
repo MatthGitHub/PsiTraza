@@ -71,13 +71,18 @@ exit;
       </div>
       <!-- Main component for a primary marketing message or call to action -->
       <div class="jumbotron">
-        <h1>Sistema de Trazabilidad</h1>
+        <h3>Ingresar numero de lote</h3>
+<form name="form1" method="GET" action="seguimiento_lote.php">
+        <div class="form-group">
+               <div class="input-group">
+                   <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+                   <input name="idLote" type="text" class="form-control"  id="idLote" placeholder="idLote" />
+               </div>
+           </div>
         <p>
-			<a class="btn btn-lg btn-primary" href="nuevo_lote.php" role="button">Nuevo Lote &raquo;</a>
+			       <input type="submit" name="Submit" value="Buscar"  class="btn btn-sm btn-primary btn-block">
         </p>
-        <p>
-			<a class="btn btn-lg btn-primary" href="buscar_lote.php" role="button">Seguimiento Lote &raquo;</a>
-        </p>
+      </form>
       </div>
 
     </div> <!-- /container -->

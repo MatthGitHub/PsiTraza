@@ -34,8 +34,8 @@
     {
         border:2px solid #eee;
         transform:rotate(360deg);
-        -ms-transform:rotate(360deg);  
-        -webkit-transform:rotate(360deg);  
+        -ms-transform:rotate(360deg);
+        -webkit-transform:rotate(360deg);
         /*-webkit-font-smoothing:antialiased;*/
     }
 body
@@ -64,13 +64,43 @@ body
     border-color: rgb(40, 94, 142);
     color: rgb(255, 255, 255);
 }
-.form-signup input[type="text"],.form-signup input[type="password"] { border: 1px solid rgb(50, 118, 177); }    
+.form-signup input[type="text"],.form-signup input[type="password"] { border: 1px solid rgb(50, 118, 177); }
   </style>
   <body>
-    <br>
         <div class="container">
 
       <!-- Static navbar -->
+      <div class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Proveedores</a>
+          </div>
+          <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+              <li><a href="inicio.php">Inicio</a></li>
+              <li class=""><a href="proveedores.php">Proveedores</a></li>
+              <li class="active"><a href="registrar_proveedores.php">Nuevo</a></li>
+              <li class=""><a href="proveedores.php">Modificar</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="">Fecha:
+              	<?php
+              	// Establecer la zona horaria predeterminada a usar. Disponible desde PHP 5.1
+              	date_default_timezone_set('UTC');
+              	//Imprimimos la fecha actual dandole un formato
+              	echo date("d / m / Y");
+              	?></a></li>
+              <li><a href="cerrar.php">Salir</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div><!--/.container-fluid -->
+      </div>
       <!-- Main component for a primary marketing message or call to action -->
       <div class="jumbotron">
 
@@ -110,52 +140,52 @@ body
                             </span>
                             <input name="email" type="text" id="email" class="form-control" placeholder="Correo Electronico" />
                         </div>
-                    </div>                     
+                    </div>
                 </div>
                 <input type="submit" name="Submit" value="Registrar"  class="btn btn-sm btn-primary btn-block">
  </form>
             </div>
                      <?php
-if(isset($_GET['sucess'])){ 
+if(isset($_GET['sucess'])){
 echo "
 <div class='alert alert-success-alt alert-dismissable'>
                 <span class='glyphicon glyphicon-certificate'></span>
                 <button type='button' class='close' data-dismiss='alert' aria-hidden='true'>
                     ×</button>Listo! Tu registro fue hecho satisfactoriamente.</div>
-"; 
-}else{ 
-echo ""; 
-} 
+";
+}else{
+echo "";
+}
 ?>
 <?php
-if(isset($_GET['errordat'])){ 
+if(isset($_GET['errordat'])){
 echo "
 <div class='alert alert-warning-alt alert-dismissable'>
                 <span class='glyphicon glyphicon-certificate'></span>
                 <button type='button' class='close' data-dismiss='alert' aria-hidden='true'>
                     ×</button>Ha habido un error al insertar los valores.</div>
-"; 
-}else{ 
-echo ""; 
-} 
+";
+}else{
+echo "";
+}
 ?>
 <?php
-if(isset($_GET['errordb'])){ 
+if(isset($_GET['errordb'])){
 echo "
 <div class='alert alert-danger-alt alert-dismissable'>
                 <span class='glyphicon glyphicon-certificate'></span>
                 <button type='button' class='close' data-dismiss='alert' aria-hidden='true'>
                     ×</button>Error, no ha introducido todos los datos.</div>
-"; 
-}else{ 
-echo ""; 
-} 
+";
+}else{
+echo "";
+}
 ?>
         </div>
     </div>
 </div>
 </form>
-</div> 
+</div>
 
 
 

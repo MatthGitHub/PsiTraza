@@ -1,10 +1,24 @@
+<?php
+include('config.php');
+if($_SESSION["logeado"] != "SI"){
+header ("Location: index.php");
+exit;
+}
+
+// Conectar a la base de datos
+mysql_connect ($dbhost, $dbusername, $dbuserpass);
+mysql_select_db($dbname) or die('No se puede seleccionar la base de datos');
+$query = mysql_query("SELECT * FROM proveedores") or die(mysql_error());
+
+$juliano= gregoriantojd (4,28,2016);
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Nuevo Cliente</title>
+    <title>Nuevo Lote</title>
 
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -67,6 +81,7 @@ body
 .form-signup input[type="text"],.form-signup input[type="password"] { border: 1px solid rgb(50, 118, 177); }
   </style>
   <body>
+    <br>
         <div class="container">
 
       <!-- Static navbar -->
@@ -79,14 +94,11 @@ body
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">Clientes</a>
+            <a class="navbar-brand" href="#">Nuevo Lote</a>
           </div>
           <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
               <li><a href="inicio.php">Inicio</a></li>
-              <li class=""><a href="clientes.php">Clientes</a></li>
-              <li class="active"><a href="registrar_clientes.php">Nuevo</a></li>
-              <li class=""><a href="clientes.php">Modificar</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
               <li><a href="">Fecha:
@@ -106,42 +118,38 @@ body
 
 
 <div class="container">
-	<form name="form1" method="post" action="insertar_cliente.php">
+	<form name="form1" method="post" action="insertar_lote.php">
     <div class="row">
         <div class="col-md-4 col-md-offset-4">
             <div class="panel panel-default">
                 <div class="panel-body">
                     <h5 class="text-center">
-                        Nuevo cliente</h5>
+                        Nuevo Lote</h5>
                     <form class="form form-signup" role="form">
                     <div class="form-group">
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-chevron-down"></span></span>
+                        <div class="col-xs-15 selectContainer">
+                            <select class="form-control" name="idProveedor">
+                           		<option value="">Proveedor</option>
+                                <?php while($proveedor = mysql_fetch_array($query)){ ?>
+                                <option value=<?php echo $proveedor['idProveedor'] ?>><?php echo $proveedor['nombre']?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                    </div>
+                 </div>
+                 <div class="form-group">
                         <div class="input-group">
                             <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
-                            <input name="nombre" type="text" id="nombre" class="form-control" placeholder="Nombre" />
+                            <input name="idLote" type="text" class="form-control"  id="idLote" value="<?php echo $juliano ?>" placeholder="idLote" />
                         </div>
                     </div>
                     <div class="form-group">
-                        <div class="input-group">
-                            <span class="input-group-addon"><span class="glyphicon glyphicon-home"></span>
-                            </span>
-                            <input name="direccion" type="text" id="direccion" class="form-control" placeholder="Direccion" />
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="input-group">
-                            <span class="input-group-addon"><span class="glyphicon glyphicon-phone"></span>
-                            </span>
-                            <input name="telefono" type="text" id="telefono" class="form-control" placeholder="Telefono" />
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="input-group">
-                            <span class="input-group-addon"><span class="glyphicon glyphicon-envelope"></span>
-                            </span>
-                            <input name="email" type="text" id="email" class="form-control" placeholder="Correo Electronico" />
-                        </div>
-                    </div>
-                </div>
+                           <div class="input-group">
+                               <span class="input-group-addon"><span class="glyphicon glyphicon-stats"></span></span>
+                               <input name="cantidad" type="text" class="form-control"  id="cantidad" value="" placeholder="Cantidad en KG" />
+                           </div>
+                       </div>
                 <input type="submit" name="Submit" value="Registrar"  class="btn btn-sm btn-primary btn-block">
  </form>
             </div>
