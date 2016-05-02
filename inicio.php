@@ -1,8 +1,8 @@
 <?php
 include('config.php');
 if($_SESSION["logeado"] != "SI"){
-header ("Location: index.php");
-exit;
+	header ("Location: index.php");
+	exit;
 }
 ?>
 
@@ -46,12 +46,30 @@ exit;
           <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
               <li class="active"><a href="inicio.php">Inicio</a></li>
-              <li class=""><a href="clientes.php">Clientes</a></li>
-              <li class=""><a href="proveedores.php">Proveedores</a></li>
+              <li class="dropdown">
+              	<a class="dropdown-toggle" data-toggle="dropdown" href="#">Clientes<span class="caret"></span></a>
+                	<ul class="dropdown-menu">
+                      <li><a href="clientes.php">Listar</a></li>
+                      <li><a href="registrar_clientes.php">Nuevo</a></li>
+                    </ul>
+              </li>
+              <li class="dropdown">
+              	<a class="dropdown-toggle" data-toggle="dropdown" href="#">Proveedores<span class="caret"></span></a>
+                	<ul class="dropdown-menu">
+                      <li><a href="proveedores.php">Listar</a></li>
+                      <li><a href="registrar_proveedores.php">Nuevo</a></li>
+                    </ul>
+              </li>
 
 			  <?php
 					if($_SESSION["permiso"] == 1) {
-						?> <li><a href="usuarios.php">Usuarios</a></li><?php
+						?> <li class="dropdown">
+              					<a class="dropdown-toggle" data-toggle="dropdown" href="#">Usuarios<span class="caret"></span></a>
+                				<ul class="dropdown-menu">
+                     				<li><a href="usuarios.php">Listar</a></li>
+                      				<li><a href="registrarse.php">Nuevo</a></li>
+                    			</ul>
+              				</li><?php
 					}
 			  ?>
             </ul>

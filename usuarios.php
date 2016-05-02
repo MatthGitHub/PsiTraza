@@ -59,6 +59,7 @@ $query = mysql_query("SELECT * FROM usuarios") or die(mysql_error());
         <div class="container">
 
       <!-- Static navbar -->
+     <!-- Static navbar -->
       <div class="navbar navbar-default" role="navigation">
         <div class="container-fluid">
           <div class="navbar-header">
@@ -68,16 +69,40 @@ $query = mysql_query("SELECT * FROM usuarios") or die(mysql_error());
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">Usuarios</a>
+            <a class="navbar-brand" href="#">Bienvenido </a>
           </div>
           <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-              <li><a href="inicio.php">Inicio</a></li>
-              <li class="active"><a href="usuarios.php">Usuarios</a></li>
-              <li class=""><a href="registrarse.php">Nuevo</a></li>
-              <li class=""><a href="usuarios.php">Modificar</a></li>
+              <li class=""><a href="inicio.php">Inicio</a></li>
+              <li class="dropdown">
+              	<a class="dropdown-toggle" data-toggle="dropdown" href="#">Clientes<span class="caret"></span></a>
+                	<ul class="dropdown-menu">
+                      <li><a href="clientes.php">Listar</a></li>
+                      <li><a href="registrar_clientes.php">Nuevo</a></li>
+                    </ul>
+              </li>
+              <li class="dropdown">
+              	<a class="dropdown-toggle" data-toggle="dropdown" href="#">Proveedores<span class="caret"></span></a>
+                	<ul class="dropdown-menu">
+                      <li><a href="proveedores.php">Listar</a></li>
+                      <li><a href="registrar_proveedores.php">Nuevo</a></li>
+                    </ul>
+              </li>
+
+			  <?php
+					if($_SESSION["permiso"] == 1) {
+						?> <li class="dropdown">
+              					<a class="dropdown-toggle" data-toggle="dropdown" href="#">Usuarios<span class="caret"></span></a>
+                				<ul class="dropdown-menu">
+                     				<li><a href="usuarios.php">Listar</a></li>
+                      				<li><a href="registrarse.php">Nuevo</a></li>
+                    			</ul>
+              				</li><?php
+					}
+			  ?>
             </ul>
             <ul class="nav navbar-nav navbar-right">
+               <li><a href=""> <?php echo $_SESSION["s_username"]; ?> </a></li>
               <li><a href="">Fecha:
               	<?php
               	// Establecer la zona horaria predeterminada a usar. Disponible desde PHP 5.1
@@ -99,6 +124,7 @@ $query = mysql_query("SELECT * FROM usuarios") or die(mysql_error());
                         <th> Clave </th>
                         <th> Email </th>
                         <th> Permisos </th>
+                        <?php if($_SESSION["permiso"] == 1){?> <th> Eliminar </th> <?php }?>
                     </thead>
                     <tbody>
                     	<?php while($usuario = mysql_fetch_array($query)){ ?>
@@ -108,6 +134,9 @@ $query = mysql_query("SELECT * FROM usuarios") or die(mysql_error());
                             <td> <?php if ($usuario['password'] != ''){ echo "*******";}else{ echo "Sin pass";} ?> </td>
                             <td> <?php echo $usuario['email']; ?> </td>
                             <td> <?php if($usuario['permisos'] == 1){ echo "Administrador";}else{ echo "Normal";} ?> </td>
+                             <?php if($_SESSION["permiso"] == 1){?> 
+                            <td>  <a href="eliminar.php?id=<?php echo $usuario['ID'];?>&tipo=usuario " role="button"  class="btn btn-danger btn-primary btn-block"> Eliminar </a></td>
+							<?php }?>
                         </tr>
                         <?php }else{ ?>
                         <tr class="info">
@@ -115,6 +144,9 @@ $query = mysql_query("SELECT * FROM usuarios") or die(mysql_error());
                             <td> <?php if ($usuario['password'] != ''){ echo "*******";}else{ echo "Sin pass";} ?> </td>
                             <td> <?php echo $usuario['email']; ?> </td>
                             <td> <?php if($usuario['permisos'] == 1){ echo "Administrador";}else{ echo "Normal";} ?> </td>
+                             <?php if(($_SESSION["permiso"] == 1)||($_SESSION["permiso"] == 2)){?> 
+                            <td>  <a href="eliminar.php?id=<?php echo $usuario['ID'];?>&tipo=usuario " role="button"  class="btn btn-danger btn-primary btn-block"> Eliminar </a></td>
+							<?php }?>
                         </tr>
                         <?php } ?>
                         <?php } ?>

@@ -55,7 +55,6 @@ $juliano= gregoriantojd (4,28,2016);
 body
 {
     background-color: #1b1b1b;
-    padding-top: 40px;
 }
 
 .alert-purple { border-color: #694D9F;background: #694D9F;color: #fff; }
@@ -85,6 +84,7 @@ body
         <div class="container">
 
       <!-- Static navbar -->
+      <!-- Static navbar -->
       <div class="navbar navbar-default" role="navigation">
         <div class="container-fluid">
           <div class="navbar-header">
@@ -94,13 +94,40 @@ body
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">Nuevo Lote</a>
+            <a class="navbar-brand" href="#">Bienvenido </a>
           </div>
           <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-              <li><a href="inicio.php">Inicio</a></li>
+              <li class=""><a href="inicio.php">Inicio</a></li>
+              <li class="dropdown">
+              	<a class="dropdown-toggle" data-toggle="dropdown" href="#">Clientes<span class="caret"></span></a>
+                	<ul class="dropdown-menu">
+                      <li><a href="clientes.php">Listar</a></li>
+                      <li><a href="registrar_clientes.php">Nuevo</a></li>
+                    </ul>
+              </li>
+              <li class="dropdown">
+              	<a class="dropdown-toggle" data-toggle="dropdown" href="#">Proveedores<span class="caret"></span></a>
+                	<ul class="dropdown-menu">
+                      <li><a href="proveedores.php">Listar</a></li>
+                      <li><a href="registrar_proveedores.php">Nuevo</a></li>
+                    </ul>
+              </li>
+
+			  <?php
+					if($_SESSION["permiso"] == 1) {
+						?> <li class="dropdown">
+              					<a class="dropdown-toggle" data-toggle="dropdown" href="#">Usuarios<span class="caret"></span></a>
+                				<ul class="dropdown-menu">
+                     				<li><a href="usuarios.php">Listar</a></li>
+                      				<li><a href="registrarse.php">Nuevo</a></li>
+                    			</ul>
+              				</li><?php
+					}
+			  ?>
             </ul>
             <ul class="nav navbar-nav navbar-right">
+               <li><a href=""> <?php echo $_SESSION["s_username"]; ?> </a></li>
               <li><a href="">Fecha:
               	<?php
               	// Establecer la zona horaria predeterminada a usar. Disponible desde PHP 5.1

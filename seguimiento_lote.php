@@ -57,16 +57,35 @@ $procesos = mysql_query("SELECT * FROM procesos WHERE idLote = '{$nlote}'") or d
           <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
               <li class="active"><a href="inicio.php">Inicio</a></li>
-              <li class=""><a href="clientes.php">Clientes</a></li>
-              <li class=""><a href="proveedores.php">Proveedores</a></li>
+              <li class="dropdown">
+              	<a class="dropdown-toggle" data-toggle="dropdown" href="#">Clientes<span class="caret"></span></a>
+                	<ul class="dropdown-menu">
+                      <li><a href="clientes.php">Listar</a></li>
+                      <li><a href="registrar_clientes.php">Nuevo</a></li>
+                    </ul>
+              </li>
+              <li class="dropdown">
+              	<a class="dropdown-toggle" data-toggle="dropdown" href="#">Proveedores<span class="caret"></span></a>
+                	<ul class="dropdown-menu">
+                      <li><a href="proveedores.php">Listar</a></li>
+                      <li><a href="registrar_proveedores.php">Nuevo</a></li>
+                    </ul>
+              </li>
 
 			  <?php
 					if($_SESSION["permiso"] == 1) {
-						?> <li><a href="usuarios.php">Usuarios</a></li><?php
+						?> <li class="dropdown">
+              					<a class="dropdown-toggle" data-toggle="dropdown" href="#">Usuarios<span class="caret"></span></a>
+                				<ul class="dropdown-menu">
+                     				<li><a href="usuarios.php">Listar</a></li>
+                      				<li><a href="registrarse.php">Nuevo</a></li>
+                    			</ul>
+              				</li><?php
 					}
 			  ?>
             </ul>
             <ul class="nav navbar-nav navbar-right">
+               <li><a href=""> <?php echo $_SESSION["s_username"]; ?> </a></li>
               <li><a href="">Fecha:
               	<?php
               	// Establecer la zona horaria predeterminada a usar. Disponible desde PHP 5.1
@@ -79,6 +98,7 @@ $procesos = mysql_query("SELECT * FROM procesos WHERE idLote = '{$nlote}'") or d
           </div><!--/.nav-collapse -->
         </div><!--/.container-fluid -->
       </div>
+      <!-- Main component for a primary marketing message or call to action -->
       <!-- Main component for a primary marketing message or call to action -->
       <div class="jumbotron">
         <div class="row">

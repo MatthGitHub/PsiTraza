@@ -25,8 +25,8 @@ include('config.php');
 		}
 
         // Con esta sentencia SQL insertaremos los datos en la base de datos
-        mysql_query("INSERT INTO lotes (id_lote,proveedor,cantidad)
-        VALUES ('{$idLote}','{$idProveedor}',{$cantidad})",$link);
+        mysql_query("INSERT INTO lotes (id_lote,proveedor)
+        VALUES ('{$idLote}','{$idProveedor}')",$link);
         mysql_query("INSERT INTO ingresos (idLote,fecha,cantidad)
         VALUES ('{$idLote}','{$fecha}',{$cantidad})",$link);
         // Ahora comprobaremos que todo ha ido correctamente
