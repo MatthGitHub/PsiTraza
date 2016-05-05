@@ -15,6 +15,7 @@ $ingresos = mysql_query("SELECT * FROM ingresos WHERE idLote = '{$nlote}'") or d
 $depositos = mysql_query("SELECT * FROM depositos JOIN tiposprocesos ON tipoProceso = idTipoProceso WHERE idLote = '{$nlote}'") or die(mysql_error());
 $entregas = mysql_query("SELECT * FROM entregas JOIN tiposprocesos ON tipoProceso = idTipoProceso WHERE idLote = '{$nlote}'") or die(mysql_error());
 $procesos = mysql_query("SELECT * FROM procesos JOIN tiposprocesos ON tipoProceso = idTipoProceso WHERE idLote = '{$nlote}'") or die(mysql_error());
+$entregas = mysql_query("SELECT * FROM entregas JOIN tiposprocesos ON tipoProceso = idTipoProceso JOIN clientes ON cliente = idCliente WHERE idLote = '{$nlote}'") or die(mysql_error());
 
 ?>
 
@@ -100,7 +101,6 @@ $procesos = mysql_query("SELECT * FROM procesos JOIN tiposprocesos ON tipoProces
         </div><!--/.container-fluid -->
       </div>
       <!-- Main component for a primary marketing message or call to action -->
-      <!-- Main component for a primary marketing message or call to action -->
       <div class="jumbotron">
         <div class="row">
           <h3> Seguimiento de Lote <?php echo $nlote; ?> </h3>
@@ -108,7 +108,7 @@ $procesos = mysql_query("SELECT * FROM procesos JOIN tiposprocesos ON tipoProces
             <li>        </li>
 			<li><p><a class="btn btn-lg btn-primary" href="form_proceso.php?numLote=<?php echo $nlote; ?>" role="button">A proceso &raquo;</a></p></li>
             <li><p><a class="btn btn-lg btn-primary" href="form_deposito.php?numLote=<?php echo $nlote; ?> " role="button">A deposito &raquo;</a></p></li>
-            <li><p><a class="btn btn-lg btn-primary" href="buscar_lote.php" role="button">A entrega &raquo;</a></p></li>
+            <li><p><a class="btn btn-lg btn-primary" href="form_entrega.php?numLote=<?php echo $nlote; ?> " role="button">A entrega &raquo;</a></p></li>
           </ul>
 
         </div>
@@ -134,6 +134,29 @@ $procesos = mysql_query("SELECT * FROM procesos JOIN tiposprocesos ON tipoProces
                   </table>
               </div>
               </div>
+			  <?php if (mysql_num_rows($procesos)>0){ ?>
+					<div class="jumbotron">
+						<div class="row">
+							<table class="table table-hover">
+								<h3> Procesos </h3>
+								<thead>
+									<th> Tipo de Proceso </th>
+									<th> Fecha </th>
+									<th> Cantidad en KG </th>
+								</thead>
+								<tbody>
+									<?php while($arrayProcesos = mysql_fetch_array($procesos)){ ?>
+									<tr class="success">
+										<td> <?php echo $arrayProcesos['descripcion']; ?> </td>
+										<td> <?php echo $arrayProcesos['fecha']; ?> </td>
+										<td> <?php echo $arrayProcesos['cantidad']; ?> </td>
+									</tr>
+									<?php } ?>
+								</tbody>
+					<?php } ?>
+							</table>
+						</div>
+					</div>
 					<?php if (mysql_num_rows($depositos)>0){ ?>
 					<div class="jumbotron">
 						<div class="row">
@@ -159,22 +182,24 @@ $procesos = mysql_query("SELECT * FROM procesos JOIN tiposprocesos ON tipoProces
 							</table>
 						</div>
 					</div>
-					<?php if (mysql_num_rows($procesos)>0){ ?>
+					<?php if (mysql_num_rows($entregas)>0){ ?>
 					<div class="jumbotron">
 						<div class="row">
 							<table class="table table-hover">
-								<h3> Procesos </h3>
+								<h3> Entrega </h3>
 								<thead>
 									<th> Tipo de Proceso </th>
 									<th> Fecha </th>
+									<th> Vencimiento </th>
 									<th> Cantidad en KG </th>
 								</thead>
 								<tbody>
-									<?php while($arrayProcesos = mysql_fetch_array($procesos)){ ?>
+									<?php while($arrayEntregas = mysql_fetch_array($entregas)){ ?>
 									<tr class="success">
-										<td> <?php echo $arrayProcesos['descripcion']; ?> </td>
-										<td> <?php echo $arrayProcesos['fecha']; ?> </td>
-										<td> <?php echo $arrayProcesos['cantidad']; ?> </td>
+										<td> <?php echo $arrayEntregas['descripcion']; ?> </td>
+										<td> <?php echo $arrayEntregas['cantidad']; ?> </td>
+										<td> <?php echo $arrayEntregas['fichaExpedicion']; ?> </td>
+										<td> <?php echo $arrayEntregas['nombre']; ?> </td>
 									</tr>
 									<?php } ?>
 								</tbody>
@@ -182,6 +207,7 @@ $procesos = mysql_query("SELECT * FROM procesos JOIN tiposprocesos ON tipoProces
 							</table>
 						</div>
 					</div>
+					
 
     </div> <!-- /container -->
 

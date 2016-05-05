@@ -10,8 +10,9 @@ $numLote = $_GET['numLote'];
 // Conectar a la base de datos
 mysql_connect ($dbhost, $dbusername, $dbuserpass);
 mysql_select_db($dbname) or die('No se puede seleccionar la base de datos');
-$query = mysql_query("SELECT * FROM tiposprocesos WHERE idTipoProceso IN (SELECT tipoProceso FROM procesos WHERE idLote = '{$nlote}')") or die(mysql_error());
+$query = mysql_query("SELECT * FROM tiposprocesos") or die(mysql_error());
 
+//WHERE idTipoProceso IN (SELECT tipoProceso FROM procesos WHERE idLote = '{$nlote}'   <-- Agregar al query para restringir que se depositen lotes sin ser procesados antes
 
 ?>
 <!DOCTYPE html>

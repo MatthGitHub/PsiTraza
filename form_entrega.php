@@ -4,15 +4,24 @@ if($_SESSION["logeado"] != "SI"){
 header ("Location: index.php");
 exit;
 }
-?>
 
+$numLote = $_GET['numLote'];
+
+// Conectar a la base de datos
+mysql_connect ($dbhost, $dbusername, $dbuserpass);
+mysql_select_db($dbname) or die('No se puede seleccionar la base de datos');
+$tipos = mysql_query("SELECT * FROM tiposprocesos ") or die(mysql_error());
+$clientes = mysql_query("SELECT * FROM clientes ") or die(mysql_error());
+
+
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Usuarios</title>
+    <title>A entrega</title>
 
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -42,8 +51,8 @@ exit;
     {
         border:2px solid #eee;
         transform:rotate(360deg);
-        -ms-transform:rotate(360deg);  
-        -webkit-transform:rotate(360deg);  
+        -ms-transform:rotate(360deg);
+        -webkit-transform:rotate(360deg);
         /*-webkit-font-smoothing:antialiased;*/
     }
 body
@@ -71,12 +80,13 @@ body
     border-color: rgb(40, 94, 142);
     color: rgb(255, 255, 255);
 }
-.form-signup input[type="text"],.form-signup input[type="password"] { border: 1px solid rgb(50, 118, 177); }    
+.form-signup input[type="text"],.form-signup input[type="password"] { border: 1px solid rgb(50, 118, 177); }
   </style>
   <body>
     <br>
         <div class="container">
-	<!-- Static navbar -->
+
+      <!-- Static navbar -->
       <!-- Static navbar -->
       <div class="navbar navbar-default" role="navigation">
         <div class="container-fluid">
@@ -134,96 +144,100 @@ body
         </div><!--/.container-fluid -->
       </div>
       <!-- Main component for a primary marketing message or call to action -->
-      <!-- Main component for a primary marketing message or call to action -->
-      <!-- Static navbar -->
-      <!-- Main component for a primary marketing message or call to action -->
       <div class="jumbotron">
 
 
 <div class="container">
-	<form name="form1" method="post" action="insertar.php">
+	<form name="form1" method="post" action="insertar_entrega.php?idLote=<?php echo $numLote ?>">
     <div class="row">
         <div class="col-md-4 col-md-offset-4">
             <div class="panel panel-default">
                 <div class="panel-body">
-                    <h5 class="text-center">
-                        Registro de Usuarios</h5>
+                    <h3 class="text-center"> <?php echo $numLote ?> </h3>
                     <form class="form form-signup" role="form">
                     <div class="form-group">
-                        <div class="input-group">
-                            <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
-                            <input name="username" type="text" id="username" class="form-control" placeholder="Usuario" />
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="input-group">
-                            <span class="input-group-addon"><span class="glyphicon glyphicon-envelope"></span>
-                            </span>
-                            <input name="email" type="text" id="email" class="form-control" placeholder="Correo Electronico" />
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="input-group">
-                            <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
-                            <input name="password" type="password" id="password" class="form-control" placeholder="Contraseña" />
-                        </div>
-                    </div>
-                     <div class="form-group">
-                        <span class="input-group-addon"><span class="glyphicon glyphicon-eye-open"> Permisos </span></span>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-chevron-down"></span>Tipo de procesos</span>
                         <div class="col-xs-15 selectContainer">
-                            <select class="form-control" name="permisos">
+                            <select class="form-control" name="idTipoProceso">
                            		<option value=""> </option>
-                                <option value="0">Normal</option>
-                                <option value="1">Administrador</option>
+                                <?php while($arraytipos = mysql_fetch_array($tipos)){ ?>
+                                <option value=<?php echo $arraytipos['idTipoProceso'] ?>><?php echo $arraytipos['descripcion']?></option>
+                                <?php } ?>
                             </select>
                         </div>
-						<input type="submit" name="Submit" value="Registrarse"  class="btn btn-sm btn-primary btn-block">
                     </div>
-					
-                </div>
+					<div class="form-group">
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-chevron-down"></span>Clientes</span>
+                        <div class="col-xs-15 selectContainer">
+                            <select class="form-control" name="clientes">
+                           		<option value=""> </option>
+                                <?php while($arrayclientes = mysql_fetch_array($clientes)){ ?>
+                                <option value=<?php echo $arrayclientes['idCliente'] ?>><?php echo $arrayclientes['nombre']?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                    </div>
+					<div class="form-group">
+						<div class="input-group">
+							<span class="input-group-addon"><span class="glyphicon glyphicon-stats"></span></span>
+							<input name="cantidad" type="text" class="form-control"  id="cantidad" placeholder="Cantidad en KG" />
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="input-group">
+							<span class="input-group-addon"><span class="glyphicon glyphicon-list"></span></span>
+							<input name="expedicion" type="text" class="form-control"  id="expedicion" placeholder="Ficha de expedicion" />
+						</div>
+					</div>
+					    <input type="submit" name="Submit" value="Guardar"  class="btn btn-sm btn-primary btn-block">
+				 </div>
+				 
+				 
+                    
+               
  </form>
             </div>
                      <?php
-if(isset($_GET['sucess'])){ 
+if(isset($_GET['sucess'])){
 echo "
 <div class='alert alert-success-alt alert-dismissable'>
                 <span class='glyphicon glyphicon-certificate'></span>
                 <button type='button' class='close' data-dismiss='alert' aria-hidden='true'>
                     ×</button>Listo! Tu registro fue hecho satisfactoriamente.</div>
-"; 
-}else{ 
-echo ""; 
-} 
+";
+}else{
+echo "";
+}
 ?>
 <?php
-if(isset($_GET['errordat'])){ 
+if(isset($_GET['errordat'])){
 echo "
 <div class='alert alert-warning-alt alert-dismissable'>
                 <span class='glyphicon glyphicon-certificate'></span>
                 <button type='button' class='close' data-dismiss='alert' aria-hidden='true'>
                     ×</button>Ha habido un error al insertar los valores.</div>
-"; 
-}else{ 
-echo ""; 
-} 
+";
+}else{
+echo "";
+}
 ?>
 <?php
-if(isset($_GET['errordb'])){ 
+if(isset($_GET['errordb'])){
 echo "
 <div class='alert alert-danger-alt alert-dismissable'>
                 <span class='glyphicon glyphicon-certificate'></span>
                 <button type='button' class='close' data-dismiss='alert' aria-hidden='true'>
                     ×</button>Error, no ha introducido todos los datos.</div>
-"; 
-}else{ 
-echo ""; 
-} 
+";
+}else{
+echo "";
+}
 ?>
         </div>
     </div>
 </div>
 </form>
-</div> 
+</div>
 
 
 

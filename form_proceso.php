@@ -85,7 +85,7 @@ body
     <br>
         <div class="container">
 
-      <!-- Static navbar -->
+
       <!-- Static navbar -->
       <div class="navbar navbar-default" role="navigation">
         <div class="container-fluid">
@@ -171,11 +171,19 @@ body
                                <span class="input-group-addon"><span class="glyphicon glyphicon-stats"></span></span>
                                <input name="cantidad" type="text" class="form-control"  id="cantidad" value="" placeholder="Cantidad en KG" />
                            </div>
+						   
                        </div>
-                <input type="submit" name="Submit" value="Guardar"  class="btn btn-sm btn-primary btn-block">
- </form>
+					   <input type="submit" name="Submit" value="Guardar"  class="btn btn-sm btn-primary btn-block">
+					</div>   
+                
+					</form>
             </div>
-                     <?php
+                    
+
+
+
+
+<?php
 if(isset($_GET['sucess'])){
 echo "
 <div class='alert alert-success-alt alert-dismissable'>
@@ -213,13 +221,10 @@ echo "";
 ?>
         </div>
     </div>
-</div>
+
+	</div>
 </form>
-</div>
 
-
-
-      </div>
 
     </div> <!-- /container -->
 
