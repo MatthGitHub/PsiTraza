@@ -12,9 +12,10 @@ mysql_connect ($dbhost, $dbusername, $dbuserpass);
 mysql_select_db($dbname) or die('No se puede seleccionar la base de datos');
 
 $ingresos = mysql_query("SELECT * FROM ingresos WHERE idLote = '{$nlote}'") or die(mysql_error());
-$depositos = mysql_query("SELECT * FROM depositos WHERE idLote = '{$nlote}'") or die(mysql_error());
-$entregas = mysql_query("SELECT * FROM entregas WHERE idLote = '{$nlote}'") or die(mysql_error());
-$procesos = mysql_query("SELECT * FROM procesos WHERE idLote = '{$nlote}'") or die(mysql_error());
+$depositos = mysql_query("SELECT * FROM depositos JOIN tiposprocesos ON tipoProceso = idTipoProceso WHERE idLote = '{$nlote}'") or die(mysql_error());
+$entregas = mysql_query("SELECT * FROM entregas JOIN tiposprocesos ON tipoProceso = idTipoProceso WHERE idLote = '{$nlote}'") or die(mysql_error());
+$procesos = mysql_query("SELECT * FROM procesos JOIN tiposprocesos ON tipoProceso = idTipoProceso WHERE idLote = '{$nlote}'") or die(mysql_error());
+
 ?>
 
 <!DOCTYPE html>
@@ -105,8 +106,8 @@ $procesos = mysql_query("SELECT * FROM procesos WHERE idLote = '{$nlote}'") or d
           <h3> Seguimiento de Lote <?php echo $nlote; ?> </h3>
           <ul class="nav nav-tabs" algin="right">
             <li>        </li>
+			<li><p><a class="btn btn-lg btn-primary" href="form_proceso.php?numLote=<?php echo $nlote; ?>" role="button">A proceso &raquo;</a></p></li>
             <li><p><a class="btn btn-lg btn-primary" href="form_deposito.php?numLote=<?php echo $nlote; ?> " role="button">A deposito &raquo;</a></p></li>
-            <li><p><a class="btn btn-lg btn-primary" href="buscar_lote.php" role="button">A proceso &raquo;</a></p></li>
             <li><p><a class="btn btn-lg btn-primary" href="buscar_lote.php" role="button">A entrega &raquo;</a></p></li>
           </ul>
 
@@ -133,31 +134,55 @@ $procesos = mysql_query("SELECT * FROM procesos WHERE idLote = '{$nlote}'") or d
                   </table>
               </div>
               </div>
-                    <?php if (mysql_num_rows($depositos)>0){ ?>
-                  <div class="jumbotron">
-                    <div class="row">
-                      <table class="table table-hover">
-                          <thead>
-                                <th> Nº Lote </th>
-                                <th> Cantidad </th>
-                                <th> Fecha </th>
-                                <th> Estado </th>
-                                <th> Tipo </th>
-                            </thead>
-                            <tbody>
-                              <?php while($arrayDepositos = mysql_fetch_array($depositos)){ ?>
-                                <tr class="success">
-                                    <td> <?php echo $depositos['fecha']; ?> </td>
-                                    <td> <?php echo $depositos['cantidad']; ?> </td>
-                                    <td> <?php echo $depositos['tipoProceso']; ?> </td>
-                                    <td> <?php echo $depositos['vencimiento']; ?> </td>
-                                </tr>
-                                <?php } ?>
-                            </tbody>
-                      <?php } ?>
-                    </table>
-      </div>
-    </div>
+					<?php if (mysql_num_rows($depositos)>0){ ?>
+					<div class="jumbotron">
+						<div class="row">
+							<table class="table table-hover">
+								<h3> Deposito </h3>
+								<thead>
+									<th> Tipo de Proceso </th>
+									<th> Fecha </th>
+									<th> Vencimiento </th>
+									<th> Cantidad en KG </th>
+								</thead>
+								<tbody>
+									<?php while($arrayDepositos = mysql_fetch_array($depositos)){ ?>
+									<tr class="success">
+										<td> <?php echo $arrayDepositos['descripcion']; ?> </td>
+										<td> <?php echo $arrayDepositos['fecha']; ?> </td>
+										<td> <?php echo $arrayDepositos['vencimiento']; ?> </td>
+										<td> <?php echo $arrayDepositos['cantidad']; ?> </td>
+									</tr>
+									<?php } ?>
+								</tbody>
+					<?php } ?>
+							</table>
+						</div>
+					</div>
+					<?php if (mysql_num_rows($procesos)>0){ ?>
+					<div class="jumbotron">
+						<div class="row">
+							<table class="table table-hover">
+								<h3> Procesos </h3>
+								<thead>
+									<th> Tipo de Proceso </th>
+									<th> Fecha </th>
+									<th> Cantidad en KG </th>
+								</thead>
+								<tbody>
+									<?php while($arrayProcesos = mysql_fetch_array($procesos)){ ?>
+									<tr class="success">
+										<td> <?php echo $arrayProcesos['descripcion']; ?> </td>
+										<td> <?php echo $arrayProcesos['fecha']; ?> </td>
+										<td> <?php echo $arrayProcesos['cantidad']; ?> </td>
+									</tr>
+									<?php } ?>
+								</tbody>
+					<?php } ?>
+							</table>
+						</div>
+					</div>
+
     </div> <!-- /container -->
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->

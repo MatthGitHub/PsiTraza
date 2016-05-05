@@ -22,10 +22,11 @@ if($data['password'] != $password) {
 header ("Location: index.php?errorpass");
 exit();
 }else{
-$query = mysql_query("SELECT username,password, permisos FROM usuarios WHERE username = '$username'") or die(mysql_error());
+$query = mysql_query("SELECT username,password,permisos FROM usuarios WHERE username = '$username'") or die(mysql_error());
 $row = mysql_fetch_array($query);
 $username2 = $row['username'];
 $_SESSION["s_username"] = $row['username'];
+
 $_SESSION["logeado"] = "SI";
 $_SESSION["permiso"] = $row['permisos'];
 /* Si aceptamos recordar los datos */

@@ -4,23 +4,15 @@ if($_SESSION["logeado"] != "SI"){
 header ("Location: index.php");
 exit;
 }
-
-$numLote = $_GET['numLote'];
-
-// Conectar a la base de datos
-mysql_connect ($dbhost, $dbusername, $dbuserpass);
-mysql_select_db($dbname) or die('No se puede seleccionar la base de datos');
-$query = mysql_query("SELECT * FROM tiposprocesos WHERE idTipoProceso IN (SELECT tipoProceso FROM procesos WHERE idLote = '{$nlote}')") or die(mysql_error());
-
-
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>A deposito</title>
+    <title>Usuarios</title>
 
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -50,8 +42,8 @@ $query = mysql_query("SELECT * FROM tiposprocesos WHERE idTipoProceso IN (SELECT
     {
         border:2px solid #eee;
         transform:rotate(360deg);
-        -ms-transform:rotate(360deg);
-        -webkit-transform:rotate(360deg);
+        -ms-transform:rotate(360deg);  
+        -webkit-transform:rotate(360deg);  
         /*-webkit-font-smoothing:antialiased;*/
     }
 body
@@ -79,13 +71,12 @@ body
     border-color: rgb(40, 94, 142);
     color: rgb(255, 255, 255);
 }
-.form-signup input[type="text"],.form-signup input[type="password"] { border: 1px solid rgb(50, 118, 177); }
+.form-signup input[type="text"],.form-signup input[type="password"] { border: 1px solid rgb(50, 118, 177); }    
   </style>
   <body>
     <br>
         <div class="container">
-
-      <!-- Static navbar -->
+	<!-- Static navbar -->
       <!-- Static navbar -->
       <div class="navbar navbar-default" role="navigation">
         <div class="container-fluid">
@@ -143,79 +134,77 @@ body
         </div><!--/.container-fluid -->
       </div>
       <!-- Main component for a primary marketing message or call to action -->
+      <!-- Main component for a primary marketing message or call to action -->
+      <!-- Static navbar -->
+      <!-- Main component for a primary marketing message or call to action -->
       <div class="jumbotron">
 
 
 <div class="container">
-	<form name="form1" method="post" action="insertar_deposito.php?idLote=<?php echo $numLote ?>">
+	<form name="form1" method="post" action="cambiar_clave.php">
     <div class="row">
         <div class="col-md-4 col-md-offset-4">
             <div class="panel panel-default">
                 <div class="panel-body">
-                    <h3 class="text-center"> <?php echo $numLote ?> </h3>
+                    <h5 class="text-center"> Cambio de clave:  <?php echo $_SESSION["s_username"]; ?></h5>
                     <form class="form form-signup" role="form">
-                    <div class="form-group">
-                        <span class="input-group-addon"><span class="glyphicon glyphicon-chevron-down"></span>Tipo de procesos</span>
-                        <div class="col-xs-15 selectContainer">
-                            <select class="form-control" name="idTipoProceso">
-                           		<option value=""> </option>
-                                <?php while($tipos = mysql_fetch_array($query)){ ?>
-                                <option value=<?php echo $tipos['idTipoProceso'] ?>><?php echo $tipos['descripcion']?></option>
-                                <?php } ?>
-                            </select>
-                        </div>
-                    </div>
-                 </div>
-                    <div class="form-group">
-                           <div class="input-group">
-                               <span class="input-group-addon"><span class="glyphicon glyphicon-stats"></span></span>
-                               <input name="cantidad" type="text" class="form-control"  id="cantidad" value="" placeholder="Cantidad en KG" />
-                           </div>
-                       </div>
-                <input type="submit" name="Submit" value="Guardar"  class="btn btn-sm btn-primary btn-block">
- </form>
+						<div class="form-group">
+							<div class="input-group">
+								<span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
+								<input name="claveA" type="password" id="claveA" class="form-control" placeholder="Clave nueva" />
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="input-group">
+								<span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span>
+								</span>
+								<input name="claveN" type="password" id="claveN" class="form-control" placeholder="Repetir clave nueva" />
+							</div>
+						</div>
+						<input type="submit" name="Submit" value="Cambiar"  class="btn btn-sm btn-primary btn-block">
+					</form>
             </div>
                      <?php
-if(isset($_GET['sucess'])){
+if(isset($_GET['sucess'])){ 
 echo "
 <div class='alert alert-success-alt alert-dismissable'>
                 <span class='glyphicon glyphicon-certificate'></span>
                 <button type='button' class='close' data-dismiss='alert' aria-hidden='true'>
                     ×</button>Listo! Tu registro fue hecho satisfactoriamente.</div>
-";
-}else{
-echo "";
-}
+"; 
+}else{ 
+echo ""; 
+} 
 ?>
 <?php
-if(isset($_GET['errordat'])){
+if(isset($_GET['errordat'])){ 
 echo "
 <div class='alert alert-warning-alt alert-dismissable'>
                 <span class='glyphicon glyphicon-certificate'></span>
                 <button type='button' class='close' data-dismiss='alert' aria-hidden='true'>
                     ×</button>Ha habido un error al insertar los valores.</div>
-";
-}else{
-echo "";
-}
+"; 
+}else{ 
+echo ""; 
+} 
 ?>
 <?php
-if(isset($_GET['errordb'])){
+if(isset($_GET['errordb'])){ 
 echo "
 <div class='alert alert-danger-alt alert-dismissable'>
                 <span class='glyphicon glyphicon-certificate'></span>
                 <button type='button' class='close' data-dismiss='alert' aria-hidden='true'>
                     ×</button>Error, no ha introducido todos los datos.</div>
-";
-}else{
-echo "";
-}
+"; 
+}else{ 
+echo ""; 
+} 
 ?>
         </div>
     </div>
 </div>
 </form>
-</div>
+</div> 
 
 
 

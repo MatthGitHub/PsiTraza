@@ -74,6 +74,7 @@ if($_SESSION["logeado"] != "SI"){
 			  ?>
             </ul>
             <ul class="nav navbar-nav navbar-right">
+			<li><a href="form_cambiar_clave.php"> Cambiar clave </a></li>
                <li><a href=""> <?php echo $_SESSION["s_username"]; ?> </a></li>
               <li><a href="">Fecha:
               	<?php

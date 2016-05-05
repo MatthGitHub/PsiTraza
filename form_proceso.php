@@ -10,7 +10,7 @@ $numLote = $_GET['numLote'];
 // Conectar a la base de datos
 mysql_connect ($dbhost, $dbusername, $dbuserpass);
 mysql_select_db($dbname) or die('No se puede seleccionar la base de datos');
-$query = mysql_query("SELECT * FROM tiposprocesos WHERE idTipoProceso IN (SELECT tipoProceso FROM procesos WHERE idLote = '{$nlote}')") or die(mysql_error());
+$query = mysql_query("SELECT * FROM tiposprocesos ") or die(mysql_error());
 
 
 ?>
@@ -20,7 +20,7 @@ $query = mysql_query("SELECT * FROM tiposprocesos WHERE idTipoProceso IN (SELECT
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>A deposito</title>
+    <title>A proceso</title>
 
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -147,7 +147,7 @@ body
 
 
 <div class="container">
-	<form name="form1" method="post" action="insertar_deposito.php?idLote=<?php echo $numLote ?>">
+	<form name="form1" method="post" action="insertar_proceso.php?idLote=<?php echo $numLote ?>">
     <div class="row">
         <div class="col-md-4 col-md-offset-4">
             <div class="panel panel-default">

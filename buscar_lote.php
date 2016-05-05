@@ -90,7 +90,7 @@ exit;
       <!-- Main component for a primary marketing message or call to action -->
       <div class="jumbotron">
         <h3>Ingresar numero de lote</h3>
-<form name="form1" method="GET" action="seguimiento_lote.php">
+		<form name="form1" method="GET" action="seguimiento_lote.php">
         <div class="form-group">
                <div class="input-group">
                    <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
@@ -99,6 +99,11 @@ exit;
            </div>
         <p>
 			       <input type="submit" name="Submit" value="Buscar"  class="btn btn-sm btn-primary btn-block">
+        </p>
+      </form>
+	  <form name="form1" method="GET" action="lotes.php">
+         <p>
+			       <input type="submit" name="Submit" value="Ver todos"  class="btn btn-sm btn-primary btn-block">
         </p>
       </form>
       </div>

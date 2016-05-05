@@ -5,22 +5,21 @@ header ("Location: index.php");
 exit;
 }
 
-$numLote = $_GET['numLote'];
-
 // Conectar a la base de datos
 mysql_connect ($dbhost, $dbusername, $dbuserpass);
 mysql_select_db($dbname) or die('No se puede seleccionar la base de datos');
-$query = mysql_query("SELECT * FROM tiposprocesos WHERE idTipoProceso IN (SELECT tipoProceso FROM procesos WHERE idLote = '{$nlote}')") or die(mysql_error());
+$query = mysql_query("SELECT * FROM lotes JOIN proveedores ON proveedor = idProveedor JOIN ingresos ON id_lote = idLote") or die(mysql_error());
 
 
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>A deposito</title>
+    <title>Proveedores</title>
 
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -50,42 +49,15 @@ $query = mysql_query("SELECT * FROM tiposprocesos WHERE idTipoProceso IN (SELECT
     {
         border:2px solid #eee;
         transform:rotate(360deg);
-        -ms-transform:rotate(360deg);
-        -webkit-transform:rotate(360deg);
+        -ms-transform:rotate(360deg);  
+        -webkit-transform:rotate(360deg);  
         /*-webkit-font-smoothing:antialiased;*/
     }
-body
-{
-    background-color: #1b1b1b;
-}
-
-.alert-purple { border-color: #694D9F;background: #694D9F;color: #fff; }
-.alert-info-alt { border-color: #B4E1E4;background: #81c7e1;color: #fff; }
-.alert-danger-alt { border-color: #B63E5A;background: #E26868;color: #fff; }
-.alert-warning-alt { border-color: #F3F3EB;background: #E9CEAC;color: #fff; }
-.alert-success-alt { border-color: #19B99A;background: #20A286;color: #fff; }
-.glyphicon { margin-right:10px; }
-.alert a {color: gold;}
-
-.input-group-addon
-{
-    background-color: rgb(50, 118, 177);
-    border-color: rgb(40, 94, 142);
-    color: rgb(255, 255, 255);
-}
-.form-control:focus
-{
-    background-color: rgb(50, 118, 177);
-    border-color: rgb(40, 94, 142);
-    color: rgb(255, 255, 255);
-}
-.form-signup input[type="text"],.form-signup input[type="password"] { border: 1px solid rgb(50, 118, 177); }
   </style>
   <body>
     <br>
         <div class="container">
 
-      <!-- Static navbar -->
       <!-- Static navbar -->
       <div class="navbar navbar-default" role="navigation">
         <div class="container-fluid">
@@ -144,81 +116,29 @@ body
       </div>
       <!-- Main component for a primary marketing message or call to action -->
       <div class="jumbotron">
+<div class="row">
+              <table class="table table-hover">
+                	<thead>
+                    	<th> Numero de lote </th>
+                        <th> Poveedor </th>
+						<th> Fecha Ingreso </th>
+                        <?php if($_SESSION["permiso"] == 1) {?> <th> Eliminar </th> <?php }?>
+                    </thead>
+                    <tbody>
+                    	<?php while($lotes = mysql_fetch_array($query)){ ?>
+                        <tr class="success">
+                            <td> <?php echo $lotes['id_lote']; ?> </td>
+                            <td> <?php echo $lotes['nombre']; ?> </td>
+							<td> <?php echo $lotes['fecha']; ?> </td>
+                             <?php if($_SESSION["permiso"] == 1) {?> 
+                            <td>  <a href="eliminar.php?id=<?php echo $lotes['idProveedor'];?>&tipo=lote " role="button"  class="btn btn-danger btn-primary btn-block"> Eliminar </a></td>
+							<?php }?>
+                        </tr>
+                        <?php } ?>
+                    </tbody>
+				</table>
 
-
-<div class="container">
-	<form name="form1" method="post" action="insertar_deposito.php?idLote=<?php echo $numLote ?>">
-    <div class="row">
-        <div class="col-md-4 col-md-offset-4">
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <h3 class="text-center"> <?php echo $numLote ?> </h3>
-                    <form class="form form-signup" role="form">
-                    <div class="form-group">
-                        <span class="input-group-addon"><span class="glyphicon glyphicon-chevron-down"></span>Tipo de procesos</span>
-                        <div class="col-xs-15 selectContainer">
-                            <select class="form-control" name="idTipoProceso">
-                           		<option value=""> </option>
-                                <?php while($tipos = mysql_fetch_array($query)){ ?>
-                                <option value=<?php echo $tipos['idTipoProceso'] ?>><?php echo $tipos['descripcion']?></option>
-                                <?php } ?>
-                            </select>
-                        </div>
-                    </div>
-                 </div>
-                    <div class="form-group">
-                           <div class="input-group">
-                               <span class="input-group-addon"><span class="glyphicon glyphicon-stats"></span></span>
-                               <input name="cantidad" type="text" class="form-control"  id="cantidad" value="" placeholder="Cantidad en KG" />
-                           </div>
-                       </div>
-                <input type="submit" name="Submit" value="Guardar"  class="btn btn-sm btn-primary btn-block">
- </form>
-            </div>
-                     <?php
-if(isset($_GET['sucess'])){
-echo "
-<div class='alert alert-success-alt alert-dismissable'>
-                <span class='glyphicon glyphicon-certificate'></span>
-                <button type='button' class='close' data-dismiss='alert' aria-hidden='true'>
-                    ×</button>Listo! Tu registro fue hecho satisfactoriamente.</div>
-";
-}else{
-echo "";
-}
-?>
-<?php
-if(isset($_GET['errordat'])){
-echo "
-<div class='alert alert-warning-alt alert-dismissable'>
-                <span class='glyphicon glyphicon-certificate'></span>
-                <button type='button' class='close' data-dismiss='alert' aria-hidden='true'>
-                    ×</button>Ha habido un error al insertar los valores.</div>
-";
-}else{
-echo "";
-}
-?>
-<?php
-if(isset($_GET['errordb'])){
-echo "
-<div class='alert alert-danger-alt alert-dismissable'>
-                <span class='glyphicon glyphicon-certificate'></span>
-                <button type='button' class='close' data-dismiss='alert' aria-hidden='true'>
-                    ×</button>Error, no ha introducido todos los datos.</div>
-";
-}else{
-echo "";
-}
-?>
-        </div>
-    </div>
 </div>
-</form>
-</div>
-
-
-
       </div>
 
     </div> <!-- /container -->

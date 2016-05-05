@@ -21,13 +21,13 @@ include('config.php');
 
 
         // Con esta sentencia SQL insertaremos los datos en la base de datos
-        mysql_query("INSERT INTO depositos (idLote,tipoProceso,fecha,vencimiento,cantidad) VALUES ('{$idLote}','{$tipo}','{$fecha}','{$vencimiento}','{$cantidad}')",$link);
+        mysql_query("INSERT INTO procesos (idLote,tipoProceso,fecha,cantidad) VALUES ('{$idLote}','{$tipo}','{$fecha}','{$cantidad}')",$link);
         // Ahora comprobaremos que todo ha ido correctamente
         $my_error = mysql_error($link);
 
         if(!empty($my_error)) {
 
-            header ("Location: form_deposito.php?errordat&numLote={$idLote}");
+            header ("Location: form_proceso.php?errordat&numLote={$idLote}");
 
         } else {
 
@@ -37,7 +37,7 @@ include('config.php');
 
     } else {
 
-         header ("Location: form_deposito.php?errordb&numLote={$idLote}");
+         header ("Location: form_proceso.php?errordb&numLote={$idLote}");
 
     }
 
