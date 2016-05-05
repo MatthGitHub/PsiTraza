@@ -1,13 +1,13 @@
 <?php
 $dbhost='localhost'; // Servidor
 $dbusername='root'; // Nombre de usuario
-$dbuserpass='cavaliere'; // Contraseña
+$dbuserpass='123matth'; // Contraseña
 $dbname='psicultura'; // Nombre de la base de datos
 session_start();
 
 // Comprobamos si hay cookie, si está bien y le asignamos una sesión
 // Esto quiere decir que si recordamos la contraseña nos auto loguee.
-if(isset($_COOKIE['id_extreme'])) 
+if(isset($_COOKIE['id_extreme']))
 {
 	$cookie = htmlentities($_COOKIE['id_extreme']);
 	$cookie = explode("%",$cookie);
@@ -28,7 +28,7 @@ if(isset($_COOKIE['id_extreme']))
 		mysql_select_db($dbname,$link) or die('No se puede seleccionar la base de datos');
 		$query = mysql_query("SELECT * FROM usuarios WHERE id_extreme='".$id."' and username='".$user."'") or die(mysql_error());
    		$row = mysql_fetch_array($query);
-   		if(isset($row['username'])) 
+   		if(isset($row['username']))
 		{
 		$_SESSION["s_username"] = $row['username'];
 		$_SESSION["logeado"] = "SI";

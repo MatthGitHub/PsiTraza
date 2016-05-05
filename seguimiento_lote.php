@@ -36,7 +36,7 @@ $procesos = mysql_query("SELECT * FROM procesos WHERE idLote = '{$nlote}'") or d
     <![endif]-->
   </head>
   <style type="text/css">
-  body{background: #000;}
+    body{background: #000;}
   </style>
   <body>
     <br>
@@ -103,6 +103,13 @@ $procesos = mysql_query("SELECT * FROM procesos WHERE idLote = '{$nlote}'") or d
       <div class="jumbotron">
         <div class="row">
           <h3> Seguimiento de Lote <?php echo $nlote; ?> </h3>
+          <ul class="nav nav-tabs" algin="right">
+            <li>        </li>
+            <li><p><a class="btn btn-lg btn-primary" href="form_deposito.php?numLote=<?php echo $nlote; ?> " role="button">A deposito &raquo;</a></p></li>
+            <li><p><a class="btn btn-lg btn-primary" href="buscar_lote.php" role="button">A proceso &raquo;</a></p></li>
+            <li><p><a class="btn btn-lg btn-primary" href="buscar_lote.php" role="button">A entrega &raquo;</a></p></li>
+          </ul>
+
         </div>
       </div>
       <div class="jumbotron">

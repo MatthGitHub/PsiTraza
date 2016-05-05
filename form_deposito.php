@@ -5,12 +5,14 @@ header ("Location: index.php");
 exit;
 }
 
+$numLote = $_GET['numLote'];
+
 // Conectar a la base de datos
 mysql_connect ($dbhost, $dbusername, $dbuserpass);
 mysql_select_db($dbname) or die('No se puede seleccionar la base de datos');
-$query = mysql_query("SELECT * FROM proveedores") or die(mysql_error());
+$query = mysql_query("SELECT * FROM tiposprocesos") or die(mysql_error());
 
-$juliano= gregoriantojd (4,28,2016);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -18,7 +20,7 @@ $juliano= gregoriantojd (4,28,2016);
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Nuevo Lote</title>
+    <title>A deposito</title>
 
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -145,38 +147,25 @@ body
 
 
 <div class="container">
-	<form name="form1" method="post" action="insertar_lote.php">
+	<form name="form1" method="post" action="insertar_deposito.php">
     <div class="row">
         <div class="col-md-4 col-md-offset-4">
             <div class="panel panel-default">
                 <div class="panel-body">
-                    <h5 class="text-center">
-                        Nuevo Lote</h5>
+                    <h3 class="text-center"> <?php echo $numLote ?> </h3>
                     <form class="form form-signup" role="form">
                     <div class="form-group">
-                        <span class="input-group-addon"><span class="glyphicon glyphicon-chevron-down"></span></span>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-chevron-down"></span>Tipo de procesos</span>
                         <div class="col-xs-15 selectContainer">
-                            <select class="form-control" name="idProveedor">
-                           		<option value="">Proveedor</option>
-                                <?php while($proveedor = mysql_fetch_array($query)){ ?>
-                                <option value=<?php echo $proveedor['idProveedor'] ?>><?php echo $proveedor['nombre']?></option>
+                            <select class="form-control" name="idTipoProceso">
+                           		<option value=""> </option>
+                                <?php while($tipos = mysql_fetch_array($query)){ ?>
+                                <option value=<?php echo $tipos['idTipoProceso'] ?>><?php echo $tipos['descripcion']?></option>
                                 <?php } ?>
                             </select>
                         </div>
                     </div>
                  </div>
-                 <div class="form-group">
-                        <div class="input-group">
-                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
-                            <input name="idLote" type="text" class="form-control"  id="idLote" placeholder="Dia calendario juliano" />
-                        </div>
-                    </div>
-                    <div class="form-group">
-                           <div class="input-group">
-                               <span class="input-group-addon"><span class="glyphicon glyphicon-cargo"></span></span>
-                               <input name="nIngreso" type="text" class="form-control"  id="nIngreso" placeholder="Numero de ingreso del dia" />
-                           </div>
-                       </div>
                     <div class="form-group">
                            <div class="input-group">
                                <span class="input-group-addon"><span class="glyphicon glyphicon-stats"></span></span>
