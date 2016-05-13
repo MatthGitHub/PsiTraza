@@ -19,7 +19,7 @@ $query = mysql_query("SELECT * FROM lotes JOIN proveedores ON proveedor = idProv
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Proveedores</title>
+    <title>Lotes</title>
 
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -122,7 +122,7 @@ $query = mysql_query("SELECT * FROM lotes JOIN proveedores ON proveedor = idProv
                     	<th> Numero de lote </th>
                         <th> Poveedor </th>
 						<th> Fecha Ingreso </th>
-                        <?php if($_SESSION["permiso"] == 1) {?> <th> Eliminar </th> <?php }?>
+						<th> Buscar </th>
                     </thead>
                     <tbody>
                     	<?php while($lotes = mysql_fetch_array($query)){ ?>
@@ -130,9 +130,7 @@ $query = mysql_query("SELECT * FROM lotes JOIN proveedores ON proveedor = idProv
                             <td> <?php echo $lotes['id_lote']; ?> </td>
                             <td> <?php echo $lotes['nombre']; ?> </td>
 							<td> <?php echo $lotes['fecha']; ?> </td>
-                             <?php if($_SESSION["permiso"] == 1) {?> 
-                            <td>  <a href="eliminar.php?id=<?php echo $lotes['idProveedor'];?>&tipo=lote " role="button"  class="btn btn-danger btn-primary btn-block"> Eliminar </a></td>
-							<?php }?>
+							<td>  <a href="seguimiento_lote.php?idLote=<?php echo $lotes['idLote'];?>" role="button"  class="btn btn-info btn-primary btn-block"> Buscar </a></td>
                         </tr>
                         <?php } ?>
                     </tbody>

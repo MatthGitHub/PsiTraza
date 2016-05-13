@@ -16,15 +16,13 @@ include('config.php');
 		date_default_timezone_set('UTC');
 		//Imprimimos la fecha actual dandole un formato
 		$fecha = date("Y-m-d");
-		$anio = date("Y")+1;
-		$vencimiento = date("$anio-m-d");
 
         $link = mysql_connect ($dbhost, $dbusername, $dbuserpass);
         mysql_select_db($dbname,$link);
 
 
         // Con esta sentencia SQL insertaremos los datos en la base de datos
-        mysql_query("INSERT INTO entregas (cliente,tipoProceso,fichaExpedicion,idLote,cantidad) VALUES ('{$cliente}','{$tipo}','{$expedicion}','{$idLote}','{$cantidad}')",$link);
+        mysql_query("INSERT INTO entregas (cliente,tipoProceso,fichaExpedicion,idLote,cantidad,fecha) VALUES ('{$cliente}','{$tipo}','{$expedicion}','{$idLote}','{$cantidad}','{$fecha}')",$link);
         // Ahora comprobaremos que todo ha ido correctamente
         $my_error = mysql_error($link);
 

@@ -1,0 +1,2 @@
+Cambiar de lugar la toma de parametro de idLote de todos los formularios.
+verificar query de eliminar ingreso y lote.
