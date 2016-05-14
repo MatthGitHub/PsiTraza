@@ -105,12 +105,25 @@ $entregas = mysql_query("SELECT * FROM entregas JOIN tiposprocesos ON tipoProces
         <div class="row">
           <h3> Seguimiento de Lote <?php echo $nlote; ?> </h3>
           <ul class="nav nav-tabs" algin="right">
+            <?php if(!isset($_GET['errordat'])){ ?>
             <li>        </li>
-			<li><p><a class="btn btn-lg btn-primary" href="form_proceso.php?numLote=<?php echo $nlote; ?>" role="button">A proceso &raquo;</a></p></li>
+			      <li><p><a class="btn btn-lg btn-primary" href="form_proceso.php?numLote=<?php echo $nlote; ?>" role="button">A proceso &raquo;</a></p></li>
             <li><p><a class="btn btn-lg btn-primary" href="form_deposito.php?numLote=<?php echo $nlote; ?> " role="button">A deposito &raquo;</a></p></li>
             <li><p><a class="btn btn-lg btn-primary" href="form_entrega.php?numLote=<?php echo $nlote; ?> " role="button">A entrega &raquo;</a></p></li>
           </ul>
-
+          <?php }  ?>
+          <?php
+          if(isset($_GET['errordat'])){
+          echo "
+          <div class='alert alert-warning-alt alert-dismissable'>
+                          <span class='glyphicon glyphicon-certificate'></span>
+                          <button type='button' class='close' data-dismiss='alert' aria-hidden='true'>
+                              ×</button>Debe eliminar todos los procesos antes de eliminar el ingreso y el lote</div>
+          ";
+          }else{
+          echo "";
+          }
+          ?>
         </div>
       </div>
       <div class="jumbotron">
@@ -128,8 +141,8 @@ $entregas = mysql_query("SELECT * FROM entregas JOIN tiposprocesos ON tipoProces
                               <tr class="success">
                                   <td> <?php echo $arrayIngresos['fecha']; ?> </td>
                                   <td> <?php echo $arrayIngresos['cantidad']; ?> </td>
-								  <?php if($_SESSION["permiso"] == 1) {?> 
-								  <td>  <a href="eliminar.php?id=<?php echo $arrayIngresos['idLote'];?>&tipo=ingreso " role="button"  class="btn btn-danger btn-primary btn-block"> Eliminar </a></td>
+								  <?php if($_SESSION["permiso"] == 1) {?>
+								  <td>  <a href="eliminar.php?id=<?php echo $arrayIngresos['idIngreso'];?>&tipo=ingreso " role="button"  class="btn btn-danger btn-primary btn-block"> Eliminar </a></td>
 								  <?php }?>
                               </tr>
                               <?php } ?>
@@ -155,7 +168,7 @@ $entregas = mysql_query("SELECT * FROM entregas JOIN tiposprocesos ON tipoProces
 										<td> <?php echo $arrayProcesos['descripcion']; ?> </td>
 										<td> <?php echo $arrayProcesos['fecha']; ?> </td>
 										<td> <?php echo $arrayProcesos['cantidad']; ?> </td>
-										<?php if($_SESSION["permiso"] == 1) {?> 
+										<?php if($_SESSION["permiso"] == 1) {?>
 										<td>  <a href="eliminar.php?id=<?php echo $arrayProcesos['idProceso'];?>&tipo=proceso " role="button"  class="btn btn-danger btn-primary btn-block"> Eliminar </a></td>
 										<?php }?>
 									</tr>
@@ -184,7 +197,7 @@ $entregas = mysql_query("SELECT * FROM entregas JOIN tiposprocesos ON tipoProces
 										<td> <?php echo $arrayDepositos['fecha']; ?> </td>
 										<td> <?php echo $arrayDepositos['vencimiento']; ?> </td>
 										<td> <?php echo $arrayDepositos['cantidad']; ?> </td>
-										<?php if($_SESSION["permiso"] == 1) {?> 
+										<?php if($_SESSION["permiso"] == 1) {?>
 										<td>  <a href="eliminar.php?id=<?php echo $arrayDepositos['iDeposito'];?>&tipo=deposito " role="button"  class="btn btn-danger btn-primary btn-block"> Eliminar </a></td>
 										<?php }?>
 									</tr>
@@ -215,7 +228,7 @@ $entregas = mysql_query("SELECT * FROM entregas JOIN tiposprocesos ON tipoProces
 										<td> <?php echo $arrayEntregas['fecha']; ?> </td>
 										<td> <?php echo $arrayEntregas['fichaExpedicion']; ?> </td>
 										<td> <?php echo $arrayEntregas['nombre']; ?> </td>
-										<?php if($_SESSION["permiso"] == 1) {?> 
+										<?php if($_SESSION["permiso"] == 1) {?>
 										<td>  <a href="eliminar.php?id=<?php echo $arrayEntregas['idEntrega'];?>&tipo=entrega " role="button"  class="btn btn-danger btn-primary btn-block"> Eliminar </a></td>
 										<?php }?>
 									</tr>
@@ -225,7 +238,7 @@ $entregas = mysql_query("SELECT * FROM entregas JOIN tiposprocesos ON tipoProces
 							</table>
 						</div>
 					</div>
-					
+
 
     </div> <!-- /container -->
 

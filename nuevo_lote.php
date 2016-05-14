@@ -154,10 +154,9 @@ body
                         Nuevo Lote</h5>
                     <form class="form form-signup" role="form">
                     <div class="form-group">
-                        <span class="input-group-addon"><span class="glyphicon glyphicon-chevron-down"></span></span>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-chevron-down"> Proveedor </span></span>
                         <div class="col-xs-15 selectContainer">
                             <select class="form-control" name="idProveedor">
-                           		<option value="">Proveedor</option>
                                 <?php while($proveedor = mysql_fetch_array($query)){ ?>
                                 <option value=<?php echo $proveedor['idProveedor'] ?>><?php echo $proveedor['nombre']?></option>
                                 <?php } ?>
@@ -173,7 +172,7 @@ body
                     </div>
                     <div class="form-group">
                            <div class="input-group">
-                               <span class="input-group-addon"><span class="glyphicon glyphicon-cargo"></span></span>
+                               <span class="input-group-addon"><span class="glyphicon glyphicon-cloud-download"></span></span>
                                <input name="nIngreso" type="text" class="form-control"  id="nIngreso" placeholder="Numero de ingreso del dia" />
                            </div>
                        </div>
@@ -204,7 +203,7 @@ echo "
 <div class='alert alert-warning-alt alert-dismissable'>
                 <span class='glyphicon glyphicon-certificate'></span>
                 <button type='button' class='close' data-dismiss='alert' aria-hidden='true'>
-                    ×</button>Ha habido un error al insertar los valores.</div>
+                    ×</button>Ha habido un error al insertar los valores. Asegurese de usar punto y no coma para la cantidad</div>
 ";
 }else{
 echo "";

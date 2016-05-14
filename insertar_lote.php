@@ -15,6 +15,10 @@ include('config.php');
     $idLote = (string) $idLote;
     $idLote = $idLote.$anio.$idProveedor.$nIngreso;
     $cantidad = $_POST['cantidad'];
+    if(strpos($cantidad,',') > 0){
+      $cantidad = number_format($cantidad,0,",",".");
+    }
+
     // Establecer la zona horaria predeterminada a usar. Disponible desde PHP 5.1
     date_default_timezone_set('UTC');
     //Imprimimos la fecha actual dandole un formato

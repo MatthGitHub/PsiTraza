@@ -5,7 +5,7 @@ include('config.php');
     isset($_POST['direccion']) && !empty($_POST['direccion']) &&
     isset ($_POST['email']) && !empty($_POST['email']) &&
     isset($_POST['telefono']) && !empty($_POST['telefono'])){
-        // Si entramos es que todo se ha realizado correctamente
+    // Si entramos es que todo se ha realizado correctamente
 		$direccion = $_POST['direccion'];
 		$nombre = htmlentities($_POST['nombre']);
 		$mail = htmlentities($_POST['email']);
@@ -32,7 +32,7 @@ include('config.php');
 
         // Con esta sentencia SQL insertaremos los datos en la base de datos
         mysql_query("INSERT INTO proveedores (nombre,direccion,telefono,correo)
-        VALUES ('{$nombre}','{$direccion}','{$telefonos}','{$mail}')",$link);
+        VALUES ('{$nombre}','{$direccion}','{$telefono}','{$mail}')",$link);
 
         // Ahora comprobaremos que todo ha ido correctamente
         $my_error = mysql_error($link);

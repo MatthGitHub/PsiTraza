@@ -1,11 +1,12 @@
 <?php
 include('config.php');
-    // Primero comprobamos que ning�n campo est� vac�o y que todos los campos existan.
-	if(isset($_POST['idTipoProceso']) && isset($_POST['clientes']) && 
-	isset($_POST['expedicion']) && !empty($_POST['expedicion']) && 
+$idLote = $_GET['idLote'];
+		// Primero comprobamos que ning�n campo est� vac�o y que todos los campos existan.
+	if(isset($_POST['idTipoProceso']) && isset($_POST['clientes']) &&
+	isset($_POST['expedicion']) && !empty($_POST['expedicion']) &&
 	isset($_POST['cantidad']) && !empty($_POST['cantidad'])){
         // Si entramos es que todo se ha realizado correctamente
-		$idLote = $_GET['idLote'];
+
 		$tipo = $_POST['idTipoProceso'];
 		$cantidad = $_POST['cantidad'];
 		$expedicion = $_POST['expedicion'];
