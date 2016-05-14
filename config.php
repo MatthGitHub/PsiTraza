@@ -1,7 +1,7 @@
 <?php
 $dbhost='localhost'; // Servidor
 $dbusername='root'; // Nombre de usuario
-$dbuserpass='cavaliere'; // Contraseña
+$dbuserpass='123matth'; // Contraseña
 $dbname='psicultura'; // Nombre de la base de datos
 session_start();
 
