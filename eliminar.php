@@ -10,8 +10,10 @@ $flag = 0;
 
 		$link = mysqli_connect ($dbhost, $dbusername, $dbuserpass);
 		mysqli_select_db($link,$dbname);
-		$lotes = mysqli_query("SELECT * FROM lotes",$link);
-		$idLote = mysqli_result($lotes,0,'id_lote');
+		$lotes = mysqli_query($link,"SELECT * FROM lotes");
+		$idLote = mysqli_fetch_array($lotes);
+		
+		
 		//Si el id que obtenemos por post es de clientes
 		if($tipo == 'cliente'){
 			$queEmp = "DELETE FROM clientes WHERE idCliente= $id";
@@ -21,7 +23,7 @@ $flag = 0;
 		//Si el id que obtenemos por post es de proveedores
 		if($tipo == 'proveedor'){
 			$queEmp = "DELETE FROM proveedores WHERE idProveedor='$id'";
-			$resEmp = mysqli_query($link,$queEmp) or die(mysql_error());
+			$resEmp = mysql_query($link,$queEmp) or die(mysql_error());
 		}
 
 		//Si el id que obtenemos por post es de usuarios
@@ -41,8 +43,11 @@ $flag = 0;
 					LEFT JOIN ingresos i ON i.idLote = id_lote
 					WHERE idIngreso = $id AND (iDeposito IS NOT NULL OR idEntrega IS NOT NULL OR idProceso IS NOT NULL)") or die(mysql_error());
 			$existe = mysqli_fetch_array($qexiste);
-
-			if(mysql_num_rows($qexiste) == 0){
+			
+			if(mysqli_num_rows($qexiste) == 0){
+				$ingreso = mysqli_query($link,"SELECT idLote FROM ingresos WHERE idIngreso='$id'") or die(mysql_error());
+				$idLote = mysqli_fetch_array($ingreso);
+				$idLote = $idLote['idLote'];
 				$queEmp = "DELETE FROM ingresos WHERE idLote='$idLote'";
 				$resEmp = mysqli_query($link,$queEmp) or die(mysql_error());
 				$queEmp = "DELETE FROM lotes WHERE id_lote='$idLote'";
@@ -54,22 +59,25 @@ $flag = 0;
 
 		//Si el id que obtenemos por post es de entrega
 		if($tipo == 'entrega'){
-			$proceso = mysqli_query($link,"SELECT * FROM entregas WHERE idEntrega='$id'") or die(mysql_error());
-			$idLote = mysql_result($proceso,0,'idLote');
+			$entrega = mysqli_query($link,"SELECT idLote FROM entregas WHERE idEntrega='$id'") or die(mysql_error());
+			$idLote = mysqli_fetch_array($entrega);
+			$idLote = $idLote['idLote'];
 			$queEmp = "DELETE FROM entregas WHERE idEntrega='$id'";
 			$resEmp = mysqli_query($link,$queEmp) or die(mysql_error());
 		}
 		//Si el id que obtenemos por post es de deposito
 		if($tipo == 'deposito'){
-			$deposito = mysqli_query($link,"SELECT * FROM depositos WHERE iDeposito='$id'") or die(mysql_error());
-			$idLote = mysqli_result($deposito,0,'idLote');
+			$deposito = mysqli_query($link,"SELECT idLote FROM depositos WHERE iDeposito='$id'") or die(mysql_error());
+			$idLote = mysqli_fetch_array($deposito);
+			$idLote = $idLote['idLote'];
 			$queEmp = "DELETE FROM depositos WHERE iDeposito='$id'";
 			$resEmp = mysqli_query($link,$queEmp) or die(mysql_error());
 		}
 		//Si el id que obtenemos por post es de proceso
 		if($tipo == 'proceso'){
-			$proceso = mysqli_query($link,"SELECT * FROM procesos WHERE idProceso='$id'") or die(mysql_error());
-			$idLote = mysqli_result($proceso,0,'idLote');
+			$proceso = mysqli_query($link,"SELECT idLote FROM procesos WHERE idProceso='$id'") or die(mysql_error());
+			$idLote = mysqli_fetch_array($proceso);
+			$idLote = $idLote['idLote'];
 			$queEmp = "DELETE FROM procesos WHERE idProceso='$id'";
 			$resEmp = mysqli_query($link,$queEmp) or die(mysql_error());
 		}
