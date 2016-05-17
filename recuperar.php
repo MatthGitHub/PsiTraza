@@ -10,18 +10,18 @@ if($_POST['button']){
 
 		$mail = htmlentities($_POST['mail']);
 
-		$link = mysql_connect ($dbhost, $dbusername, $dbuserpass);
-        mysql_select_db($dbname,$link);
+		$link = mysqli_connect ($dbhost, $dbusername, $dbuserpass);
+        mysqli_select_db($dbname,$link);
 
 		$queEmp = "SELECT * FROM usuarios WHERE email='$mail'";
-		$resEmp = mysql_query($queEmp, $link) or die(mysql_error());
+		$resEmp = mysqli_query($queEmp, $link) or die(mysql_error());
 		$totEmp = mysql_num_rows($resEmp);
 		if($totEmp == 0){
 		echo "El mail ingresado no existe";
 		exit();
 		}
 
-		$row = mysql_fetch_assoc($resEmp);
+		$row = mysqli_fetch_assoc($resEmp);
 		$hash = md5(md5($row['username']).md5($row['password']));
 
 		$headers .= "From:Recuperar password <info@webmaster.com>\r\n";

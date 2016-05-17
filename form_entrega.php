@@ -8,10 +8,10 @@ exit;
 $numLote = $_GET['numLote'];
 
 // Conectar a la base de datos
-mysql_connect ($dbhost, $dbusername, $dbuserpass);
-mysql_select_db($dbname) or die('No se puede seleccionar la base de datos');
-$tipos = mysql_query("SELECT * FROM tiposprocesos ") or die(mysql_error());
-$clientes = mysql_query("SELECT * FROM clientes ") or die(mysql_error());
+$link = mysqli_connect ($dbhost, $dbusername, $dbuserpass);
+mysqli_select_db($link,$dbname) or die('No se puede seleccionar la base de datos');
+$tipos = mysqli_query($link,"SELECT * FROM tiposprocesos ") or die(mysql_error());
+$clientes = mysqli_query($link,"SELECT * FROM clientes ") or die(mysql_error());
 
 
 ?>
@@ -160,7 +160,7 @@ body
                         <div class="col-xs-15 selectContainer">
                             <select class="form-control" name="idTipoProceso">
                            		<option value=""> </option>
-                                <?php while($arraytipos = mysql_fetch_array($tipos)){ ?>
+                                <?php while($arraytipos = mysqli_fetch_array($tipos)){ ?>
                                 <option value=<?php echo $arraytipos['idTipoProceso'] ?>><?php echo $arraytipos['descripcion']?></option>
                                 <?php } ?>
                             </select>
@@ -171,7 +171,7 @@ body
                         <div class="col-xs-15 selectContainer">
                             <select class="form-control" name="clientes">
                            		<option value=""> </option>
-                                <?php while($arrayclientes = mysql_fetch_array($clientes)){ ?>
+                                <?php while($arrayclientes = mysqli_fetch_array($clientes)){ ?>
                                 <option value=<?php echo $arrayclientes['idCliente'] ?>><?php echo $arrayclientes['nombre']?></option>
                                 <?php } ?>
                             </select>

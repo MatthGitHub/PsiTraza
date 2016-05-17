@@ -6,9 +6,9 @@ exit;
 }
 
 // Conectar a la base de datos
-mysql_connect ($dbhost, $dbusername, $dbuserpass);
-mysql_select_db($dbname) or die('No se puede seleccionar la base de datos');
-$query = mysql_query("SELECT * FROM clientes") or die(mysql_error());
+$link = mysqli_connect ($dbhost, $dbusername, $dbuserpass);
+mysqli_select_db($link,$dbname) or die('No se puede seleccionar la base de datos');
+$query = mysqli_query($link,"SELECT * FROM clientes") or die(mysql_error());
 
 
 ?>
@@ -127,7 +127,7 @@ $query = mysql_query("SELECT * FROM clientes") or die(mysql_error());
 
                     </thead>
                     <tbody>
-                    	<?php while($cliente = mysql_fetch_array($query)){ ?>
+                    	<?php while($cliente = mysqli_fetch_array($query)){ ?>
                         <tr class="success">
                             <td> <?php echo $cliente['nombre']; ?> </td>
                             <td> <?php echo $cliente['direccion']; ?> </td>

@@ -17,12 +17,12 @@ include('config.php');
 		$anio = date("Y")+1;
 		$vencimiento = date("$anio-m-d");
 
-        $link = mysql_connect ($dbhost, $dbusername, $dbuserpass);
-        mysql_select_db($dbname,$link);
+        $link = mysqli_connect ($dbhost, $dbusername, $dbuserpass);
+        mysqli_select_db($dbname,$link);
 
 
         // Con esta sentencia SQL insertaremos los datos en la base de datos
-        mysql_query("INSERT INTO depositos (idLote,tipoProceso,fecha,vencimiento,cantidad) VALUES ('{$idLote}','{$tipo}','{$fecha}','{$vencimiento}','{$cantidad}')",$link);
+        mysqli_query("INSERT INTO depositos (idLote,tipoProceso,fecha,vencimiento,cantidad) VALUES ('{$idLote}','{$tipo}','{$fecha}','{$vencimiento}','{$cantidad}')",$link);
         // Ahora comprobaremos que todo ha ido correctamente
         $my_error = mysql_error($link);
 

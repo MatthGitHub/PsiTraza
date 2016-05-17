@@ -8,14 +8,14 @@ exit;
 $nlote = $_GET['idLote'];
 
 // Conectar a la base de datos
-mysql_connect ($dbhost, $dbusername, $dbuserpass);
-mysql_select_db($dbname) or die('No se puede seleccionar la base de datos');
+$link = mysqli_connect ($dbhost, $dbusername, $dbuserpass);
+mysqli_select_db($link,$dbname) or die('No se puede seleccionar la base de datos');
 
-$ingresos = mysql_query("SELECT * FROM ingresos WHERE idLote = '{$nlote}'") or die(mysql_error());
-$depositos = mysql_query("SELECT * FROM depositos JOIN tiposprocesos ON tipoProceso = idTipoProceso WHERE idLote = '{$nlote}'") or die(mysql_error());
-$entregas = mysql_query("SELECT * FROM entregas JOIN tiposprocesos ON tipoProceso = idTipoProceso WHERE idLote = '{$nlote}'") or die(mysql_error());
-$procesos = mysql_query("SELECT * FROM procesos JOIN tiposprocesos ON tipoProceso = idTipoProceso WHERE idLote = '{$nlote}'") or die(mysql_error());
-$entregas = mysql_query("SELECT * FROM entregas JOIN tiposprocesos ON tipoProceso = idTipoProceso JOIN clientes ON cliente = idCliente WHERE idLote = '{$nlote}'") or die(mysql_error());
+$ingresos = mysqli_query($link,"SELECT * FROM ingresos WHERE idLote = '{$nlote}'") or die(mysql_error());
+$depositos = mysqli_query($link,"SELECT * FROM depositos JOIN tiposprocesos ON tipoProceso = idTipoProceso WHERE idLote = '{$nlote}'") or die(mysql_error());
+$entregas = mysqli_query($link,"SELECT * FROM entregas JOIN tiposprocesos ON tipoProceso = idTipoProceso WHERE idLote = '{$nlote}'") or die(mysql_error());
+$procesos = mysqli_query($link,"SELECT * FROM procesos JOIN tiposprocesos ON tipoProceso = idTipoProceso WHERE idLote = '{$nlote}'") or die(mysql_error());
+$entregas = mysqli_query($link,"SELECT * FROM entregas JOIN tiposprocesos ON tipoProceso = idTipoProceso JOIN clientes ON cliente = idCliente WHERE idLote = '{$nlote}'") or die(mysql_error());
 
 ?>
 
@@ -128,7 +128,7 @@ $entregas = mysql_query("SELECT * FROM entregas JOIN tiposprocesos ON tipoProces
       </div>
       <div class="jumbotron">
         <div class="row">
-                  <?php if (mysql_num_rows($ingresos)>0){ ?>
+                  <?php if (mysqli_num_rows($ingresos)>0){ ?>
                     <table class="table table-hover">
                       <h3> Ingreso </h3>
                         <thead>
@@ -137,7 +137,7 @@ $entregas = mysql_query("SELECT * FROM entregas JOIN tiposprocesos ON tipoProces
 							  <?php if($_SESSION["permiso"] == 1) {?> <th> Eliminar </th> <?php }?>
                           </thead>
                           <tbody>
-                          	<?php while($arrayIngresos = mysql_fetch_array($ingresos)){ ?>
+                          	<?php while($arrayIngresos = mysqli_fetch_array($ingresos)){ ?>
                               <tr class="success">
                                   <td> <?php echo $arrayIngresos['fecha']; ?> </td>
                                   <td> <?php echo $arrayIngresos['cantidad']; ?> </td>
@@ -151,7 +151,7 @@ $entregas = mysql_query("SELECT * FROM entregas JOIN tiposprocesos ON tipoProces
                   </table>
               </div>
               </div>
-			  <?php if (mysql_num_rows($procesos)>0){ ?>
+			  <?php if (mysqli_num_rows($procesos)>0){ ?>
 					<div class="jumbotron">
 						<div class="row">
 							<table class="table table-hover">
@@ -163,7 +163,7 @@ $entregas = mysql_query("SELECT * FROM entregas JOIN tiposprocesos ON tipoProces
 									<?php if($_SESSION["permiso"] == 1) {?> <th> Eliminar </th> <?php }?>
 								</thead>
 								<tbody>
-									<?php while($arrayProcesos = mysql_fetch_array($procesos)){ ?>
+									<?php while($arrayProcesos = mysqli_fetch_array($procesos)){ ?>
 									<tr class="success">
 										<td> <?php echo $arrayProcesos['descripcion']; ?> </td>
 										<td> <?php echo $arrayProcesos['fecha']; ?> </td>
@@ -178,7 +178,7 @@ $entregas = mysql_query("SELECT * FROM entregas JOIN tiposprocesos ON tipoProces
 							</table>
 						</div>
 					</div>
-					<?php if (mysql_num_rows($depositos)>0){ ?>
+					<?php if (mysqli_num_rows($depositos)>0){ ?>
 					<div class="jumbotron">
 						<div class="row">
 							<table class="table table-hover">
@@ -191,7 +191,7 @@ $entregas = mysql_query("SELECT * FROM entregas JOIN tiposprocesos ON tipoProces
 									<?php if($_SESSION["permiso"] == 1) {?> <th> Eliminar </th> <?php }?>
 								</thead>
 								<tbody>
-									<?php while($arrayDepositos = mysql_fetch_array($depositos)){ ?>
+									<?php while($arrayDepositos = mysqli_fetch_array($depositos)){ ?>
 									<tr class="success">
 										<td> <?php echo $arrayDepositos['descripcion']; ?> </td>
 										<td> <?php echo $arrayDepositos['fecha']; ?> </td>
@@ -207,7 +207,7 @@ $entregas = mysql_query("SELECT * FROM entregas JOIN tiposprocesos ON tipoProces
 							</table>
 						</div>
 					</div>
-					<?php if (mysql_num_rows($entregas)>0){ ?>
+					<?php if (mysqli_num_rows($entregas)>0){ ?>
 					<div class="jumbotron">
 						<div class="row">
 							<table class="table table-hover">
@@ -221,7 +221,7 @@ $entregas = mysql_query("SELECT * FROM entregas JOIN tiposprocesos ON tipoProces
 									<?php if($_SESSION["permiso"] == 1) {?> <th> Eliminar </th> <?php }?>
 								</thead>
 								<tbody>
-									<?php while($arrayEntregas = mysql_fetch_array($entregas)){ ?>
+									<?php while($arrayEntregas = mysqli_fetch_array($entregas)){ ?>
 									<tr class="success">
 										<td> <?php echo $arrayEntregas['descripcion']; ?> </td>
 										<td> <?php echo $arrayEntregas['cantidad']; ?> </td>

@@ -8,9 +8,9 @@ exit;
 $numLote = $_GET['numLote'];
 
 // Conectar a la base de datos
-mysql_connect ($dbhost, $dbusername, $dbuserpass);
-mysql_select_db($dbname) or die('No se puede seleccionar la base de datos');
-$query = mysql_query("SELECT * FROM tiposprocesos ") or die(mysql_error());
+$link = mysqli_connect ($dbhost, $dbusername, $dbuserpass);
+mysqli_select_db($link,$dbname) or die('No se puede seleccionar la base de datos');
+$query = mysqli_query($link,"SELECT * FROM tiposprocesos ") or die(mysql_error());
 
 
 ?>
@@ -159,7 +159,7 @@ body
                         <div class="col-xs-15 selectContainer">
                             <select class="form-control" name="idTipoProceso">
                            		<option value=""> </option>
-                                <?php while($tipos = mysql_fetch_array($query)){ ?>
+                                <?php while($tipos = mysqli_fetch_array($query)){ ?>
                                 <option value=<?php echo $tipos['idTipoProceso'] ?>><?php echo $tipos['descripcion']?></option>
                                 <?php } ?>
                             </select>

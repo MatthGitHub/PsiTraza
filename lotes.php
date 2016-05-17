@@ -6,9 +6,9 @@ exit;
 }
 
 // Conectar a la base de datos
-mysql_connect ($dbhost, $dbusername, $dbuserpass);
-mysql_select_db($dbname) or die('No se puede seleccionar la base de datos');
-$query = mysql_query("SELECT * FROM lotes JOIN proveedores ON proveedor = idProveedor JOIN ingresos ON id_lote = idLote") or die(mysql_error());
+$link = mysqli_connect ($dbhost, $dbusername, $dbuserpass);
+mysqli_select_db($link,$dbname) or die('No se puede seleccionar la base de datos');
+$query = mysqli_query($link,"SELECT * FROM lotes JOIN proveedores ON proveedor = idProveedor JOIN ingresos ON id_lote = idLote") or die(mysql_error());
 
 
 ?>
@@ -125,7 +125,7 @@ $query = mysql_query("SELECT * FROM lotes JOIN proveedores ON proveedor = idProv
 						<th> Buscar </th>
                     </thead>
                     <tbody>
-                    	<?php while($lotes = mysql_fetch_array($query)){ ?>
+                    	<?php while($lotes = mysqli_fetch_array($query)){ ?>
                         <tr class="success">
                             <td> <?php echo $lotes['id_lote']; ?> </td>
                             <td> <?php echo $lotes['nombre']; ?> </td>

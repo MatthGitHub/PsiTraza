@@ -6,9 +6,9 @@ exit;
 }
 
 // Conectar a la base de datos
-mysql_connect ($dbhost, $dbusername, $dbuserpass);
-mysql_select_db($dbname) or die('No se puede seleccionar la base de datos');
-$query = mysql_query("SELECT * FROM usuarios") or die(mysql_error());
+$link = mysqli_connect ($dbhost, $dbusername, $dbuserpass);
+mysqli_select_db($link,$dbname) or die('No se puede seleccionar la base de datos');
+$query = mysqli_query($link,"SELECT * FROM usuarios") or die(mysql_error());
 
 
 ?>
@@ -127,7 +127,7 @@ $query = mysql_query("SELECT * FROM usuarios") or die(mysql_error());
                         <?php if($_SESSION["permiso"] == 1){?> <th> Eliminar </th> <?php }?>
                     </thead>
                     <tbody>
-                    	<?php while($usuario = mysql_fetch_array($query)){ ?>
+                    	<?php while($usuario = mysqli_fetch_array($query)){ ?>
                         <?php if($usuario['permisos'] == 1){ ?>
                         <tr class="danger">
                             <td> <?php echo $usuario['username']; ?> </td>

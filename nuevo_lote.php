@@ -6,9 +6,9 @@ exit;
 }
 
 // Conectar a la base de datos
-mysql_connect ($dbhost, $dbusername, $dbuserpass);
-mysql_select_db($dbname) or die('No se puede seleccionar la base de datos');
-$query = mysql_query("SELECT * FROM proveedores") or die(mysql_error());
+$link = mysqli_connect ($dbhost, $dbusername, $dbuserpass);
+mysqli_select_db($link,$dbname) or die('No se puede seleccionar la base de datos');
+$query = mysqli_query($link,"SELECT * FROM proveedores") or die(mysql_error());
 
 $juliano= gregoriantojd (4,28,2016);
 ?>
@@ -157,7 +157,7 @@ body
                         <span class="input-group-addon"><span class="glyphicon glyphicon-chevron-down"> Proveedor </span></span>
                         <div class="col-xs-15 selectContainer">
                             <select class="form-control" name="idProveedor">
-                                <?php while($proveedor = mysql_fetch_array($query)){ ?>
+                                <?php while($proveedor = mysqli_fetch_array($query)){ ?>
                                 <option value=<?php echo $proveedor['idProveedor'] ?>><?php echo $proveedor['nombre']?></option>
                                 <?php } ?>
                             </select>

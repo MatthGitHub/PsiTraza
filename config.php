@@ -1,7 +1,7 @@
 <?php
 $dbhost='localhost'; // Servidor
 $dbusername='root'; // Nombre de usuario
-$dbuserpass='123matth'; // Contraseña
+$dbuserpass='cavaliere'; // Contraseña
 $dbname='psicultura'; // Nombre de la base de datos
 session_start();
 
@@ -24,10 +24,10 @@ if(isset($_COOKIE['id_extreme']))
 	}
 	if($ip == $ip2)
 	{
-		$link = mysql_connect($dbhost, $dbusername, $dbuserpass);
-		mysql_select_db($dbname,$link) or die('No se puede seleccionar la base de datos');
-		$query = mysql_query("SELECT * FROM usuarios WHERE id_extreme='".$id."' and username='".$user."'") or die(mysql_error());
-   		$row = mysql_fetch_array($query);
+		$link = mysqli_connect($dbhost, $dbusername, $dbuserpass);
+		mysqli_select_db($dbname,$link) or die('No se puede seleccionar la base de datos');
+		$query = mysqli_query("SELECT * FROM usuarios WHERE id_extreme='".$id."' and username='".$user."'") or die(mysql_error());
+   		$row = mysqli_fetch_array($query);
    		if(isset($row['username']))
 		{
 		$_SESSION["s_username"] = $row['username'];

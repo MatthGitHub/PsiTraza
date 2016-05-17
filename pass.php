@@ -10,23 +10,23 @@ $mail = htmlentities($_GET['mail']);
 $pass = md5($_POST['pass']);
 if($_POST['button']){
 	if(isset($id) && isset($mail)){
-		$link = mysql_connect ($dbhost, $dbusername, $dbuserpass);
-        mysql_select_db($dbname,$link);
+		$link = mysqli_connect ($dbhost, $dbusername, $dbuserpass);
+        mysqli_select_db($dbname,$link);
 
 		$queEmp = "SELECT * FROM usuarios WHERE email='$mail'";
-		$resEmp = mysql_query($queEmp, $link) or die(mysql_error());
+		$resEmp = mysqli_query($queEmp, $link) or die(mysql_error());
 		$totEmp = mysql_num_rows($resEmp);
 		if($totEmp == 0){
 		echo "El mail ingresado no existe";
 		exit();
 		}
 
-		$row = mysql_fetch_assoc($resEmp);
+		$row = mysqli_fetch_assoc($resEmp);
 		$hash = md5(md5($row['username']).md5($row['password']));
 
 		if($hash == $id){
 		$sql = "UPDATE usuarios SET password='".$pass."' WHERE email='$mail'";
-		mysql_query($sql,$link);
+		mysqli_query($sql,$link);
 		echo "Contrase&ntilde;a cambiada correctamente";
 		exit();
 		}

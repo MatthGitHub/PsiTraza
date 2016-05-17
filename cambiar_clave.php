@@ -7,11 +7,11 @@ include('config.php');
         // Si entramos es que todo se ha realizado correctamente
 		$claveA = md5($_POST['claveA']);
 
-        $link = mysql_connect ($dbhost, $dbusername, $dbuserpass);
-        mysql_select_db($dbname,$link);
+        $link = mysqli_connect ($dbhost, $dbusername, $dbuserpass);
+        mysqli_select_db($dbname,$link);
 
         // Con esta sentencia SQL insertaremos los datos en la base de datos
-        mysql_query("UPDATE usuarios SET password =".$claveA." WHERE username =".$_SESSION['username'],$link);
+        mysqli_query("UPDATE usuarios SET password =".$claveA." WHERE username =".$_SESSION['username'],$link);
 
         // Ahora comprobaremos que todo ha ido correctamente
         $my_error = mysql_error($link);

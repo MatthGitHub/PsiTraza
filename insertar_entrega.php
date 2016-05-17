@@ -18,12 +18,12 @@ $idLote = $_GET['idLote'];
 		//Imprimimos la fecha actual dandole un formato
 		$fecha = date("Y-m-d");
 
-        $link = mysql_connect ($dbhost, $dbusername, $dbuserpass);
-        mysql_select_db($dbname,$link);
+        $link = mysqli_connect ($dbhost, $dbusername, $dbuserpass);
+        mysqli_select_db($link,$dbname);
 
 
         // Con esta sentencia SQL insertaremos los datos en la base de datos
-        mysql_query("INSERT INTO entregas (cliente,tipoProceso,fichaExpedicion,idLote,cantidad,fecha) VALUES ('{$cliente}','{$tipo}','{$expedicion}','{$idLote}','{$cantidad}','{$fecha}')",$link);
+        mysqli_query($link,"INSERT INTO entregas (cliente,tipoProceso,fichaExpedicion,idLote,cantidad,fecha) VALUES ('{$cliente}','{$tipo}','{$expedicion}','{$idLote}','{$cantidad}','{$fecha}')");
         // Ahora comprobaremos que todo ha ido correctamente
         $my_error = mysql_error($link);
 

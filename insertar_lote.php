@@ -24,22 +24,22 @@ include('config.php');
     //Imprimimos la fecha actual dandole un formato
     $fecha = date("Y-m-d");
 
-        $link = mysql_connect ($dbhost, $dbusername, $dbuserpass);
-        mysql_select_db($dbname,$link);
+        $link = mysqli_connect ($dbhost, $dbusername, $dbuserpass);
+        mysqli_select_db($link,$dbname);
 
 		$queEmp = "SELECT id_lote FROM lotes WHERE id_lote='$idLote'";
-		$resEmp = mysql_query($queEmp, $link) or die(mysql_error());
-		$totEmp = mysql_num_rows($resEmp);
+		$resEmp = mysqli_query($link,$queEmp) or die(mysql_error());
+		$totEmp = mysqli_num_rows($resEmp);
 		if($totEmp > 0){
 		echo "Numero de lote existente";
 		exit();
 		}
 
         // Con esta sentencia SQL insertaremos los datos en la base de datos
-        mysql_query("INSERT INTO lotes (id_lote,proveedor)
-        VALUES ('{$idLote}','{$idProveedor}')",$link);
-        mysql_query("INSERT INTO ingresos (idLote,fecha,cantidad)
-        VALUES ('{$idLote}','{$fecha}',{$cantidad})",$link);
+        mysqli_query($link,"INSERT INTO lotes (id_lote,proveedor)
+        VALUES ('{$idLote}','{$idProveedor}')");
+        mysqli_query($link,"INSERT INTO ingresos (idLote,fecha,cantidad)
+        VALUES ('{$idLote}','{$fecha}',{$cantidad})");
         // Ahora comprobaremos que todo ha ido correctamente
         $my_error = mysql_error($link);
 

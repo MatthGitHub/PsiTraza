@@ -11,11 +11,11 @@ include('config.php');
 		$mail = htmlentities($_POST['email']);
 		$telefono = $_POST['telefono'];
 
-        $link = mysql_connect ($dbhost, $dbusername, $dbuserpass);
-        mysql_select_db($dbname,$link);
+        $link = mysqli_connect($dbhost, $dbusername, $dbuserpass);
+        mysqli_select_db($link,$dbname);
 
 		$queEmp = "SELECT nombre FROM clientes WHERE nombre='$nombre'";
-		$resEmp = mysql_query($queEmp, $link) or die(mysql_error());
+		$resEmp = mysqli_query($link,$queEmp) or die(mysql_error());
 		$totEmp = mysql_num_rows($resEmp);
 		if($totEmp > 0){
 		echo "Nombre de cliente no disponible";
@@ -23,7 +23,7 @@ include('config.php');
 		}
 
 		$queEmp = "SELECT correo FROM clientes WHERE correo='$mail'";
-		$resEmp = mysql_query($queEmp, $link) or die(mysql_error());
+		$resEmp = mysqli_query($link,$queEmp) or die(mysql_error());
 		$totEmp = mysql_num_rows($resEmp);
 		if($totEmp > 0){
 		echo "El mail ingresado no esta disponible";
@@ -31,8 +31,8 @@ include('config.php');
 		}
 
         // Con esta sentencia SQL insertaremos los datos en la base de datos
-        mysql_query("INSERT INTO clientes (nombre,direccion,telefono,correo)
-        VALUES ('{$nombre}','{$direccion}','{$telefono}','{$mail}')",$link);
+        mysqli_query($link,"INSERT INTO clientes (nombre,direccion,telefono,correo)
+        VALUES ('{$nombre}','{$direccion}','{$telefono}','{$mail}')");
 
         // Ahora comprobaremos que todo ha ido correctamente
         $my_error = mysql_error($link);
