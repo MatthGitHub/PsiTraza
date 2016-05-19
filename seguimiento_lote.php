@@ -11,11 +11,51 @@ $nlote = $_GET['idLote'];
 $link = mysqli_connect ($dbhost, $dbusername, $dbuserpass);
 mysqli_select_db($link,$dbname) or die('No se puede seleccionar la base de datos');
 
+//Busco el stock
+$tockQuery = mysqli_query($link,"SELECT (SUM(p.cantidad) - e.cantidad) AS cantidad FROM ingresos i JOIN procesos p ON p.idIngreso = i.idIngreso LEFT JOIN entregas e ON e.idProceso = p.idProceso WHERE idLote = '{$nlote}'")or die(mysql_error());
+$tock = mysqli_fetch_array($tockQuery);
+$tock = $tock['cantidad'];
+
+
+//Busco todos los ingresos del lote que siempre va a ser uno
 $ingresos = mysqli_query($link,"SELECT * FROM ingresos WHERE idLote = '{$nlote}'") or die(mysql_error());
-$depositos = mysqli_query($link,"SELECT * FROM depositos JOIN tiposprocesos ON tipoProceso = idTipoProceso WHERE idLote = '{$nlote}'") or die(mysql_error());
-$entregas = mysqli_query($link,"SELECT * FROM entregas JOIN tiposprocesos ON tipoProceso = idTipoProceso WHERE idLote = '{$nlote}'") or die(mysql_error());
-$procesos = mysqli_query($link,"SELECT * FROM procesos JOIN tiposprocesos ON tipoProceso = idTipoProceso WHERE idLote = '{$nlote}'") or die(mysql_error());
-$entregas = mysqli_query($link,"SELECT * FROM entregas JOIN tiposprocesos ON tipoProceso = idTipoProceso JOIN clientes ON cliente = idCliente WHERE idLote = '{$nlote}'") or die(mysql_error());
+$ingresos2 = mysqli_query($link,"SELECT * FROM ingresos WHERE idLote = '{$nlote}'") or die(mysql_error());
+
+
+//Busco el id ingreso
+$idIngreso = mysqli_fetch_array($ingresos2);
+$idIngreso = $idIngreso['idIngreso'];
+
+if($tock == null){
+	$ingresos3 = mysqli_query($link,"SELECT * FROM ingresos WHERE idLote = '{$nlote}'") or die(mysql_error());
+	$tock = mysqli_fetch_array($ingresos3);
+	$tock = $tock['cantidad'];
+}
+
+//Con el idIngreso busco todos los procesos que se generaron con ese idIngreso
+$procesos = mysqli_query($link,"SELECT * FROM procesos JOIN tiposprocesos ON tipoProceso = idTipoProceso WHERE idIngreso = '{$idIngreso}'") or die(mysql_error());
+$procesos2 = mysqli_query($link,"SELECT * FROM procesos JOIN tiposprocesos ON tipoProceso = idTipoProceso WHERE idIngreso = '{$idIngreso}'") or die(mysql_error());
+
+//Busco el idProceso
+$idProceso = mysqli_fetch_array($procesos2);
+$idProceso = $idProceso['idProceso'];
+
+//Con el id proceso busco depositos que correspondan a ese proceso
+$depositos = mysqli_query($link,"SELECT * FROM depositos d JOIN procesos p ON d.idProceso = p.idProceso JOIN tiposprocesos tp ON tp.idTipoProceso = p.tipoProceso WHERE idIngreso ={$idIngreso}") or die(mysql_error());
+$depositos2 = mysqli_query($link,"SELECT * FROM depositos d JOIN procesos p ON d.idProceso = p.idProceso JOIN tiposprocesos tp ON tp.idTipoProceso = p.tipoProceso WHERE idIngreso ={$idIngreso}") or die(mysql_error());
+
+//Busco el iDeposito
+$iDeposito = mysqli_fetch_array($depositos2);
+$iDeposito = $iDeposito['iDeposito'];
+
+//Busco las entregas que correspondan o al idDeposito o al idProceso
+$entregas = mysqli_query($link,
+"SELECT *
+FROM entregas
+JOIN clientes 
+ON cliente = idCliente 
+WHERE (idProceso IS NOT NULL AND idProceso IN (SELECT idProceso FROM procesos WHERE idIngreso = {$idIngreso})) 
+OR (iDeposito IS NOT NULL AND iDeposito IN (SELECT iDeposito FROM depositos WHERE idProceso IN (SELECT idProceso FROM procesos WHERE idIngreso = {$idIngreso})))") or die(mysql_error());
 
 ?>
 
@@ -103,11 +143,11 @@ $entregas = mysqli_query($link,"SELECT * FROM entregas JOIN tiposprocesos ON tip
       <!-- Main component for a primary marketing message or call to action -->
       <div class="jumbotron">
         <div class="row">
-          <h3> Seguimiento de Lote <?php echo $nlote; ?> </h3>
+          <h3> Seguimiento de Lote <?php echo $nlote; ?>  ---------------------------------------------------    Stock disponible: <?php echo $tock; ?> </h3>
           <ul class="nav nav-tabs" algin="right">
             <?php if(!isset($_GET['errordat'])){ ?>
             <li>        </li>
-			      <li><p><a class="btn btn-lg btn-primary" href="form_proceso.php?numLote=<?php echo $nlote; ?>" role="button">A proceso &raquo;</a></p></li>
+			<li><p><a class="btn btn-lg btn-primary" href="form_proceso.php?numLote=<?php echo $idIngreso; ?>" role="button">A proceso &raquo;</a></p></li>
             <li><p><a class="btn btn-lg btn-primary" href="form_deposito.php?numLote=<?php echo $nlote; ?> " role="button">A deposito &raquo;</a></p></li>
             <li><p><a class="btn btn-lg btn-primary" href="form_entrega.php?numLote=<?php echo $nlote; ?> " role="button">A entrega &raquo;</a></p></li>
           </ul>
@@ -160,6 +200,7 @@ $entregas = mysqli_query($link,"SELECT * FROM entregas JOIN tiposprocesos ON tip
 									<th> Tipo de Proceso </th>
 									<th> Fecha </th>
 									<th> Cantidad en KG </th>
+									<th> Entregar </th>
 									<?php if($_SESSION["permiso"] == 1) {?> <th> Eliminar </th> <?php }?>
 								</thead>
 								<tbody>
@@ -168,6 +209,7 @@ $entregas = mysqli_query($link,"SELECT * FROM entregas JOIN tiposprocesos ON tip
 										<td> <?php echo $arrayProcesos['descripcion']; ?> </td>
 										<td> <?php echo $arrayProcesos['fecha']; ?> </td>
 										<td> <?php echo $arrayProcesos['cantidad']; ?> </td>
+										<td>  <a href="form_entrega.php?id=<?php echo $arrayProcesos['idProceso'];?>&tipo=proceso " role="button"  class="btn btn-info btn-primary btn-block"> Entregar </a></td>
 										<?php if($_SESSION["permiso"] == 1) {?>
 										<td>  <a href="eliminar.php?id=<?php echo $arrayProcesos['idProceso'];?>&tipo=proceso " role="button"  class="btn btn-danger btn-primary btn-block"> Eliminar </a></td>
 										<?php }?>
@@ -188,6 +230,7 @@ $entregas = mysqli_query($link,"SELECT * FROM entregas JOIN tiposprocesos ON tip
 									<th> Fecha </th>
 									<th> Vencimiento </th>
 									<th> Cantidad en KG </th>
+									<th> Entregar </th>
 									<?php if($_SESSION["permiso"] == 1) {?> <th> Eliminar </th> <?php }?>
 								</thead>
 								<tbody>
@@ -197,6 +240,7 @@ $entregas = mysqli_query($link,"SELECT * FROM entregas JOIN tiposprocesos ON tip
 										<td> <?php echo $arrayDepositos['fecha']; ?> </td>
 										<td> <?php echo $arrayDepositos['vencimiento']; ?> </td>
 										<td> <?php echo $arrayDepositos['cantidad']; ?> </td>
+										<td>  <a href="form_entrega.php?id=<?php echo $arrayDepositos['iDeposito'];?>&tipo=deposito " role="button"  class="btn btn-info btn-primary btn-block"> Entregar </a></td>
 										<?php if($_SESSION["permiso"] == 1) {?>
 										<td>  <a href="eliminar.php?id=<?php echo $arrayDepositos['iDeposito'];?>&tipo=deposito " role="button"  class="btn btn-danger btn-primary btn-block"> Eliminar </a></td>
 										<?php }?>
@@ -213,6 +257,8 @@ $entregas = mysqli_query($link,"SELECT * FROM entregas JOIN tiposprocesos ON tip
 							<table class="table table-hover">
 								<h3> Entrega </h3>
 								<thead>
+									<td> Num Deposito </td>
+									<td> Num Proceso </td>
 									<th> Tipo de Proceso </th>
 									<th> Cantidad en KG </th>
 									<th> Fecha </th>
@@ -223,6 +269,8 @@ $entregas = mysqli_query($link,"SELECT * FROM entregas JOIN tiposprocesos ON tip
 								<tbody>
 									<?php while($arrayEntregas = mysqli_fetch_array($entregas)){ ?>
 									<tr class="success">
+										<td> <?php if($arrayEntregas['iDeposito'] != NULL){ echo $arrayEntregas['iDeposito'];}else{ echo " --- ";} ?> </td>
+										<td> <?php if($arrayEntregas['idProceso'] != NULL){ echo $arrayEntregas['idProceso'];}else{ echo " --- ";} ?> </td>
 										<td> <?php echo $arrayEntregas['descripcion']; ?> </td>
 										<td> <?php echo $arrayEntregas['cantidad']; ?> </td>
 										<td> <?php echo $arrayEntregas['fecha']; ?> </td>

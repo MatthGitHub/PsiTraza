@@ -1,1 +1,3 @@
 Configurar ip fija del router!!
+El maximo para procesar es la cantidad de ingreso
+El maximo para entregar el la suma de las cantidades de los procesos.

@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: localhost
--- Tiempo de generación: 18-05-2016 a las 15:35:01
+-- Tiempo de generación: 19-05-2016 a las 17:53:56
 -- Versión del servidor: 5.5.24-log
 -- Versión de PHP: 5.3.13
 
@@ -52,14 +52,20 @@ INSERT INTO `clientes` (`idCliente`, `nombre`, `direccion`, `telefono`, `correo`
 CREATE TABLE IF NOT EXISTS `depositos` (
   `iDeposito` int(11) NOT NULL AUTO_INCREMENT,
   `idProceso` int(11) NOT NULL,
-  `tipoProceso` int(11) NOT NULL,
   `fecha` date NOT NULL,
   `vencimiento` date NOT NULL,
   `cantidad` decimal(7,2) NOT NULL,
   PRIMARY KEY (`iDeposito`),
-  KEY `idLote` (`idProceso`,`tipoProceso`),
-  KEY `tipoProceso` (`tipoProceso`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci AUTO_INCREMENT=3 ;
+  KEY `idLote` (`idProceso`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci AUTO_INCREMENT=6 ;
+
+--
+-- Volcado de datos para la tabla `depositos`
+--
+
+INSERT INTO `depositos` (`iDeposito`, `idProceso`, `fecha`, `vencimiento`, `cantidad`) VALUES
+(4, 10, '2016-05-17', '2016-05-21', '10.00'),
+(5, 11, '2016-05-03', '2016-05-27', '5.00');
 
 -- --------------------------------------------------------
 
@@ -70,17 +76,15 @@ CREATE TABLE IF NOT EXISTS `depositos` (
 CREATE TABLE IF NOT EXISTS `entregas` (
   `idEntrega` int(11) NOT NULL AUTO_INCREMENT,
   `cliente` int(11) NOT NULL,
-  `tipoProceso` int(11) NOT NULL,
   `fichaExpedicion` varchar(15) CHARACTER SET latin1 NOT NULL,
   `idProceso` int(11) DEFAULT NULL,
   `iDeposito` int(11) DEFAULT NULL,
   `cantidad` decimal(7,2) NOT NULL,
   `fecha` date NOT NULL,
   PRIMARY KEY (`idEntrega`),
-  KEY `cliente` (`cliente`,`tipoProceso`,`idProceso`),
-  KEY `tipoProceso` (`tipoProceso`),
+  KEY `cliente` (`cliente`,`idProceso`),
   KEY `idLote` (`idProceso`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci AUTO_INCREMENT=13 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci AUTO_INCREMENT=15 ;
 
 -- --------------------------------------------------------
 
@@ -95,7 +99,14 @@ CREATE TABLE IF NOT EXISTS `ingresos` (
   `cantidad` decimal(7,2) NOT NULL,
   PRIMARY KEY (`idIngreso`),
   KEY `idLote` (`idLote`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci AUTO_INCREMENT=6 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci AUTO_INCREMENT=19 ;
+
+--
+-- Volcado de datos para la tabla `ingresos`
+--
+
+INSERT INTO `ingresos` (`idIngreso`, `idLote`, `fecha`, `cantidad`) VALUES
+(18, 139611, '2016-05-05', '65.00');
 
 -- --------------------------------------------------------
 
@@ -109,6 +120,25 @@ CREATE TABLE IF NOT EXISTS `lotes` (
   PRIMARY KEY (`id_lote`),
   KEY `proveedor` (`proveedor`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+
+--
+-- Volcado de datos para la tabla `lotes`
+--
+
+INSERT INTO `lotes` (`id_lote`, `proveedor`) VALUES
+(122617, 1),
+(123614, 1),
+(127615, 1),
+(139611, 1),
+(896188, 1),
+(1226122, 1),
+(12261123, 1),
+(12361123, 1),
+(123631, 3),
+(124631, 3),
+(12363123, 3),
+(122645, 4),
+(126445, 4);
 
 -- --------------------------------------------------------
 
@@ -125,7 +155,15 @@ CREATE TABLE IF NOT EXISTS `procesos` (
   PRIMARY KEY (`idProceso`),
   KEY `idLote` (`idIngreso`),
   KEY `tipoProceso` (`tipoProceso`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci AUTO_INCREMENT=10 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci AUTO_INCREMENT=12 ;
+
+--
+-- Volcado de datos para la tabla `procesos`
+--
+
+INSERT INTO `procesos` (`idProceso`, `idIngreso`, `tipoProceso`, `fecha`, `cantidad`) VALUES
+(10, 18, 3, '2016-05-19', '65.00'),
+(11, 18, 4, '2016-05-18', '15.00');
 
 -- --------------------------------------------------------
 
@@ -212,14 +250,12 @@ INSERT INTO `usuarios` (`ID`, `username`, `password`, `email`, `id_extreme`, `pe
 -- Filtros para la tabla `depositos`
 --
 ALTER TABLE `depositos`
-  ADD CONSTRAINT `depositos_ibfk_3` FOREIGN KEY (`idProceso`) REFERENCES `procesos` (`idProceso`),
-  ADD CONSTRAINT `depositos_ibfk_2` FOREIGN KEY (`tipoProceso`) REFERENCES `tiposprocesos` (`idTipoProceso`);
+  ADD CONSTRAINT `depositos_ibfk_3` FOREIGN KEY (`idProceso`) REFERENCES `procesos` (`idProceso`);
 
 --
 -- Filtros para la tabla `entregas`
 --
 ALTER TABLE `entregas`
-  ADD CONSTRAINT `entregas_ibfk_2` FOREIGN KEY (`tipoProceso`) REFERENCES `tiposprocesos` (`idTipoProceso`) ON UPDATE CASCADE,
   ADD CONSTRAINT `entregas_ibfk_4` FOREIGN KEY (`cliente`) REFERENCES `clientes` (`idCliente`);
 
 --
