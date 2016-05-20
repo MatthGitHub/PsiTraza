@@ -75,7 +75,7 @@ $flag = 0;
 		}
 		//Si el id que obtenemos por post es de proceso
 		if($tipo == 'proceso'){
-			$proceso = mysqli_query($link,"SELECT idLote FROM procesos WHERE idProceso='$id'") or die(mysql_error());
+			$proceso = mysqli_query($link,"SELECT idLote FROM procesos p JOIN ingresos i ON p.idIngreso = i.idIngreso WHERE idProceso='$id'") or die(mysql_error());
 			$idLote = mysqli_fetch_array($proceso);
 			$idLote = $idLote['idLote'];
 			$queEmp = "DELETE FROM procesos WHERE idProceso='$id'";

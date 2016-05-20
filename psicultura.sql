@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: localhost
--- Tiempo de generación: 19-05-2016 a las 17:53:56
+-- Tiempo de generación: 20-05-2016 a las 17:51:04
 -- Versión del servidor: 5.5.24-log
 -- Versión de PHP: 5.3.13
 
@@ -59,14 +59,6 @@ CREATE TABLE IF NOT EXISTS `depositos` (
   KEY `idLote` (`idProceso`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci AUTO_INCREMENT=6 ;
 
---
--- Volcado de datos para la tabla `depositos`
---
-
-INSERT INTO `depositos` (`iDeposito`, `idProceso`, `fecha`, `vencimiento`, `cantidad`) VALUES
-(4, 10, '2016-05-17', '2016-05-21', '10.00'),
-(5, 11, '2016-05-03', '2016-05-27', '5.00');
-
 -- --------------------------------------------------------
 
 --
@@ -99,14 +91,14 @@ CREATE TABLE IF NOT EXISTS `ingresos` (
   `cantidad` decimal(7,2) NOT NULL,
   PRIMARY KEY (`idIngreso`),
   KEY `idLote` (`idLote`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci AUTO_INCREMENT=19 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci AUTO_INCREMENT=20 ;
 
 --
 -- Volcado de datos para la tabla `ingresos`
 --
 
 INSERT INTO `ingresos` (`idIngreso`, `idLote`, `fecha`, `cantidad`) VALUES
-(18, 139611, '2016-05-05', '65.00');
+(19, 140631, '2016-05-20', '689.33');
 
 -- --------------------------------------------------------
 
@@ -126,19 +118,29 @@ CREATE TABLE IF NOT EXISTS `lotes` (
 --
 
 INSERT INTO `lotes` (`id_lote`, `proveedor`) VALUES
-(122617, 1),
-(123614, 1),
-(127615, 1),
-(139611, 1),
-(896188, 1),
-(1226122, 1),
-(12261123, 1),
-(12361123, 1),
-(123631, 3),
-(124631, 3),
-(12363123, 3),
-(122645, 4),
-(126445, 4);
+(140631, 3);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `procesoenespera`
+--
+
+CREATE TABLE IF NOT EXISTS `procesoenespera` (
+  `idProceso` int(11) NOT NULL,
+  `fecha` date NOT NULL,
+  `cantidad` decimal(7,2) NOT NULL,
+  `idProcesoEnEspera` int(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`idProcesoEnEspera`),
+  KEY `idProceso` (`idProceso`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci AUTO_INCREMENT=4 ;
+
+--
+-- Volcado de datos para la tabla `procesoenespera`
+--
+
+INSERT INTO `procesoenespera` (`idProceso`, `fecha`, `cantidad`, `idProcesoEnEspera`) VALUES
+(30, '2016-05-20', '12.00', 3);
 
 -- --------------------------------------------------------
 
@@ -155,15 +157,14 @@ CREATE TABLE IF NOT EXISTS `procesos` (
   PRIMARY KEY (`idProceso`),
   KEY `idLote` (`idIngreso`),
   KEY `tipoProceso` (`tipoProceso`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci AUTO_INCREMENT=12 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci AUTO_INCREMENT=31 ;
 
 --
 -- Volcado de datos para la tabla `procesos`
 --
 
 INSERT INTO `procesos` (`idProceso`, `idIngreso`, `tipoProceso`, `fecha`, `cantidad`) VALUES
-(10, 18, 3, '2016-05-19', '65.00'),
-(11, 18, 4, '2016-05-18', '15.00');
+(30, 19, 3, '2016-05-20', '12.00');
 
 -- --------------------------------------------------------
 
@@ -207,7 +208,7 @@ CREATE TABLE IF NOT EXISTS `tiposprocesos` (
 
 INSERT INTO `tiposprocesos` (`idTipoProceso`, `descripcion`) VALUES
 (1, 'Desespinada Fresca'),
-(2, 'Desesperada Congelada'),
+(2, 'Desespinada Congelada'),
 (3, 'Eviscerada Fresca'),
 (4, 'Eviscerada Congelada'),
 (5, 'Fileteada Fresca'),
@@ -269,6 +270,12 @@ ALTER TABLE `ingresos`
 --
 ALTER TABLE `lotes`
   ADD CONSTRAINT `lotes_ibfk_1` FOREIGN KEY (`proveedor`) REFERENCES `proveedores` (`idProveedor`) ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `procesoenespera`
+--
+ALTER TABLE `procesoenespera`
+  ADD CONSTRAINT `procesoenespera_ibfk_1` FOREIGN KEY (`idProceso`) REFERENCES `procesos` (`idProceso`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `procesos`

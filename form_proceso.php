@@ -5,25 +5,31 @@ header ("Location: index.php");
 exit;
 }
 
-$numLote = $_GET['numLote'];
-
+$idIngreso = $_GET['idIngreso'];
+$maxStock = $_GET['max'];
 // Conectar a la base de datos
 $link = mysqli_connect ($dbhost, $dbusername, $dbuserpass);
 mysqli_select_db($link,$dbname) or die('No se puede seleccionar la base de datos');
 $query = mysqli_query($link,"SELECT * FROM tiposprocesos ") or die(mysql_error());
-
+$query2 = mysqli_query($link,"SELECT idLote FROM ingresos WHERE idIngreso = {$idIngreso}") or die(mysql_error());
+$idLote = mysqli_fetch_array($query2);
+$idLote = $idLote['idLote'];
 
 ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>A proceso</title>
+    <title>Proceso ingreso numero: <?php echo $idIngreso; ?></title>
 
     <!-- Bootstrap -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<link href="css/bootstrap-datetimepicker.min.css" rel="stylesheet"> 
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -83,76 +89,75 @@ body
   </style>
   <body>
     <br>
-        <div class="container">
+     <div class="container">
+	 <!-- Static navbar -->
+		<div class="navbar navbar-default" role="navigation">
+		<div class="container-fluid">
+		  <div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+			  <span class="sr-only">Toggle navigation</span>
+			  <span class="icon-bar"></span>
+			  <span class="icon-bar"></span>
+			  <span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="#">Bienvenido </a>
+		  </div>
+		  <div class="navbar-collapse collapse">
+			<ul class="nav navbar-nav">
+			  <li class="active"><a href="inicio.php">Inicio</a></li>
+			  <li class="dropdown">
+				<a class="dropdown-toggle" data-toggle="dropdown" href="#">Clientes<span class="caret"></span></a>
+				  <ul class="dropdown-menu">
+					  <li><a href="clientes.php">Listar</a></li>
+					  <li><a href="registrar_clientes.php">Nuevo</a></li>
+					</ul>
+			  </li>
+			  <li class="dropdown">
+				<a class="dropdown-toggle" data-toggle="dropdown" href="#">Proveedores<span class="caret"></span></a>
+				  <ul class="dropdown-menu">
+					  <li><a href="proveedores.php">Listar</a></li>
+					  <li><a href="registrar_proveedores.php">Nuevo</a></li>
+					</ul>
+			  </li>
 
-
-      <!-- Static navbar -->
-      <div class="navbar navbar-default" role="navigation">
-        <div class="container-fluid">
-          <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-              <span class="sr-only">Toggle navigation</span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#">Bienvenido </a>
-          </div>
-          <div class="navbar-collapse collapse">
-            <ul class="nav navbar-nav">
-              <li class=""><a href="inicio.php">Inicio</a></li>
-              <li class="dropdown">
-              	<a class="dropdown-toggle" data-toggle="dropdown" href="#">Clientes<span class="caret"></span></a>
-                	<ul class="dropdown-menu">
-                      <li><a href="clientes.php">Listar</a></li>
-                      <li><a href="registrar_clientes.php">Nuevo</a></li>
-                    </ul>
-              </li>
-              <li class="dropdown">
-              	<a class="dropdown-toggle" data-toggle="dropdown" href="#">Proveedores<span class="caret"></span></a>
-                	<ul class="dropdown-menu">
-                      <li><a href="proveedores.php">Listar</a></li>
-                      <li><a href="registrar_proveedores.php">Nuevo</a></li>
-                    </ul>
-              </li>
-
-			  <?php
-					if($_SESSION["permiso"] == 1) {
-						?> <li class="dropdown">
-              					<a class="dropdown-toggle" data-toggle="dropdown" href="#">Usuarios<span class="caret"></span></a>
-                				<ul class="dropdown-menu">
-                     				<li><a href="usuarios.php">Listar</a></li>
-                      				<li><a href="registrarse.php">Nuevo</a></li>
-                    			</ul>
-              				</li><?php
-					}
-			  ?>
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
-               <li><a href=""> <?php echo $_SESSION["s_username"]; ?> </a></li>
-              <li><a href="">Fecha:
-              	<?php
-              	// Establecer la zona horaria predeterminada a usar. Disponible desde PHP 5.1
-              	date_default_timezone_set('UTC');
-              	//Imprimimos la fecha actual dandole un formato
-              	echo date("d / m / Y");
-              	?></a></li>
-              <li><a href="cerrar.php">Salir</a></li>
-            </ul>
-          </div><!--/.nav-collapse -->
-        </div><!--/.container-fluid -->
-      </div>
+		<?php
+		  if($_SESSION["permiso"] == 1) {
+			?> <li class="dropdown">
+						<a class="dropdown-toggle" data-toggle="dropdown" href="#">Usuarios<span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a href="usuarios.php">Listar</a></li>
+							  <li><a href="registrarse.php">Nuevo</a></li>
+						  </ul>
+					  </li><?php
+		  }
+		?>
+			</ul>
+			<ul class="nav navbar-nav navbar-right">
+		<li><a href="form_cambiar_clave.php"> Cambiar clave </a></li>
+			   <li><a href=""> <?php echo $_SESSION["s_username"]; ?> </a></li>
+			  <li><a href="">Fecha:
+				<?php
+				// Establecer la zona horaria predeterminada a usar. Disponible desde PHP 5.1
+				date_default_timezone_set('UTC');
+				//Imprimimos la fecha actual dandole un formato
+				echo date("d / m / Y");
+				?></a></li>
+			  <li><a href="cerrar.php">Salir</a></li>
+			</ul>
+		  </div><!--/.nav-collapse -->
+		</div><!--/.container-fluid -->
+		</div>
       <!-- Main component for a primary marketing message or call to action -->
       <div class="jumbotron">
 
 
 <div class="container">
-	<form name="form1" method="post" action="insertar_proceso.php?idLote=<?php echo $numLote ?>">
+	<form name="form1" method="post" action="insertar_proceso.php?idLote=<?php echo $idLote; ?>&idIngreso=<?php echo $idIngreso; ?>&max=<?php echo $maxStock;?>">
     <div class="row">
         <div class="col-md-4 col-md-offset-4">
             <div class="panel panel-default">
                 <div class="panel-body">
-                    <h3 class="text-center"> <?php echo $numLote ?> </h3>
+                    <h3 class="text-center">Lote <?php echo $idLote; ?> </h3>
                     <form class="form form-signup" role="form">
                     <div class="form-group">
                         <span class="input-group-addon"><span class="glyphicon glyphicon-chevron-down"></span>Tipo de procesos</span>
@@ -167,21 +172,21 @@ body
                     </div>
                  </div>
                     <div class="form-group">
-                           <div class="input-group">
+							<div class="input-group">
                                <span class="input-group-addon"><span class="glyphicon glyphicon-stats"></span></span>
                                <input name="cantidad" type="text" class="form-control"  id="cantidad" value="" placeholder="Cantidad en KG" />
-                           </div>
-
+							</div>
+							<div class='input-group date' id='divMiCalendario'>
+							  <input name="txtFecha" type='text' id="txtFecha" class="form-control"  readonly/>
+							  <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
+							  </span>
+							</div>
                        </div>
 					   <input type="submit" name="Submit" value="Guardar"  class="btn btn-sm btn-primary btn-block">
 					</div>
-
+					</div>
 					</form>
             </div>
-
-
-
-
 
 <?php
 if(isset($_GET['sucess'])){
@@ -213,7 +218,7 @@ echo "
 <div class='alert alert-danger-alt alert-dismissable'>
                 <span class='glyphicon glyphicon-certificate'></span>
                 <button type='button' class='close' data-dismiss='alert' aria-hidden='true'>
-                    ×</button>Error, no ha introducido todos los datos.</div>
+                    ×</button>Error, no ha introducido todos los datos o ha superado el stock maximo disponible.</div>
 ";
 }else{
 echo "";
@@ -232,5 +237,15 @@ echo "";
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+   <script src="js/moment.min.js"></script>
+   <script src="js/bootstrap-datetimepicker.min.js"></script>
+   <script src="js/bootstrap-datetimepicker.es.js"></script>
+   <script type="text/javascript">
+	 $('#divMiCalendario').datetimepicker({
+		  format: 'YYYY-MM-DD'       
+	  });
+	  $('#divMiCalendario').data("DateTimePicker").show();
+   </script>
   </body>
 </html>

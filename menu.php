@@ -1,10 +1,3 @@
-<?php
-include('config.php');
-if($_SESSION["logeado"] != "SI"){
-	header ("Location: index.php");
-	exit;
-}
-
 <div class="container">
 
 <!-- Static navbar -->
@@ -64,18 +57,5 @@ if($_SESSION["logeado"] != "SI"){
   </div><!--/.nav-collapse -->
 </div><!--/.container-fluid -->
 </div>
-<!-- Main component for a primary marketing message or call to action -->
-<div class="jumbotron">
-<h1>Sistema de Trazabilidad</h1>
-<p>
-<a class="btn btn-lg btn-primary" href="nuevo_lote.php" role="button">Nuevo Lote &raquo;</a>
-</p>
-<p>
-<a class="btn btn-lg btn-primary" href="buscar_lote.php" role="button">Seguimiento Lote &raquo;</a>
-</p>
-</div>
 
 </div> <!-- /container -->
-
-
-?>
