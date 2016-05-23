@@ -155,20 +155,9 @@ body
                 <div class="panel-body">
                     <h3 class="text-center"> <?php echo $numLote ?> </h3>
                     <form class="form form-signup" role="form">
-                    <div class="form-group">
-                        <span class="input-group-addon"><span class="glyphicon glyphicon-chevron-down"></span>Tipo de procesos</span>
-                        <div class="col-xs-15 selectContainer">
-                            <select class="form-control" name="idTipoProceso">
-                           		<option value=""> </option>
-                                <?php while($arraytipos = mysqli_fetch_array($tipos)){ ?>
-                                <option value=<?php echo $arraytipos['idTipoProceso'] ?>><?php echo $arraytipos['descripcion']?></option>
-                                <?php } ?>
-                            </select>
-                        </div>
-                    </div>
 					<div class="form-group">
                         <span class="input-group-addon"><span class="glyphicon glyphicon-chevron-down"></span>Clientes</span>
-                        <div class="col-xs-15 selectContainer">
+                        <div class="col-xs-15 selectContainer">idLote
                             <select class="form-control" name="clientes">
                            		<option value=""> </option>
                                 <?php while($arrayclientes = mysqli_fetch_array($clientes)){ ?>
@@ -189,7 +178,7 @@ body
 							<input name="expedicion" type="text" class="form-control"  id="expedicion" placeholder="Ficha de expedicion" />
 						</div>
 					</div>
-					    <input type="submit" name="Submit" value="Guardar"  class="btn btn-sm btn-primary btn-block">
+					    <input type="submit" name="Submit" value="Entregar"  class="btn btn-sm btn-primary btn-block">
 				 </div>
 
 

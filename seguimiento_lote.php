@@ -12,21 +12,37 @@ $link = mysqli_connect ($dbhost, $dbusername, $dbuserpass);
 mysqli_select_db($link,$dbname) or die('No se puede seleccionar la base de datos');
 
 //Busco el stock disponible para entregar ----------------------------------------------------------------------------------------------------------------------------------------------
-$tockQuery = mysqli_query($link,"SELECT (SUM(p.cantidad) - e.cantidad) AS cantidad FROM ingresos i JOIN procesos p ON p.idIngreso = i.idIngreso LEFT JOIN entregas e ON e.idProceso = p.idProceso WHERE idLote = '{$nlote}'")or die(mysql_error());
-$tock = mysqli_fetch_array($tockQuery);
-$tock = $tock['cantidad'];
+//Busco la suma de la cantidad procesada
+$cantProcesada = mysqli_query($link,"SELECT SUM(p.cantidad) AS cantidad
+FROM ingresos i
+JOIN procesos p ON p.idIngreso = i.idIngreso
+WHERE idLote = '{$nlote}' ");
+$cantProcesada = mysqli_fetch_array($cantProcesada);
+$cantProcesada = $cantProcesada['cantidad'];
+//Busco la suma de la cantidad entregada
+$cantEntregada = mysqli_query($link,"SELECT SUM(e.cantidad) AS cantidad
+FROM entregas e
+JOIN procesos p ON p.idProceso = e.idProceso
+JOIN ingresos i ON i.idIngreso= p.idIngreso
+WHERE idLote = '{$nlote}'");
+$cantEntregada = mysqli_fetch_array($cantEntregada);
+$cantEntregada = $cantEntregada['cantidad'];
+//Calculo la diferencia que me da cuanto puedo entregar
+$tock = $cantProcesada - $cantEntregada;
+
 
 //Busco stock disponible para procesar -------------------------------------------------------------------------------------------------------------------------------------------------
 $tockQuery2 = mysqli_query($link,"SELECT (i.cantidad - SUM(p.cantidad)) AS cantidad FROM ingresos i JOIN procesos p ON i.idIngreso = p.idIngreso");
 $tockProcesa = mysqli_fetch_array($tockQuery2);
 $tockProcesa = $tockProcesa['cantidad'];
 
+//Este es por si el stock da null poque todavia no hay registro en  procesos
 if($tockProcesa == null){
 	$tockQuery2 = mysqli_query($link,"SELECT cantidad FROM ingresos");
 	$tockProcesa = mysqli_fetch_array($tockQuery2);
 	$tockProcesa = $tockProcesa['cantidad'];
 }
-
+// Este es por si el stock query da null porque todavia no hay registros en entregas
 if($tock == null){
 	$tockQuery = mysqli_query($link,"SELECT SUM(p.cantidad) AS cantidad FROM ingresos i JOIN procesos p ON i.idIngreso = p.idIngreso");
 	$tock = mysqli_fetch_array($tockQuery);
@@ -66,9 +82,9 @@ $iDeposito = $iDeposito['iDeposito'];
 $entregas = mysqli_query($link,
 "SELECT *
 FROM entregas
-JOIN clientes 
-ON cliente = idCliente 
-WHERE (idProceso IS NOT NULL AND idProceso IN (SELECT idProceso FROM procesos WHERE idIngreso = {$idIngreso})) 
+JOIN clientes
+ON cliente = idCliente
+WHERE (idProceso IS NOT NULL AND idProceso IN (SELECT idProceso FROM procesos WHERE idIngreso = {$idIngreso}))
 OR (iDeposito IS NOT NULL AND iDeposito IN (SELECT iDeposito FROM depositos WHERE idProceso IN (SELECT idProceso FROM procesos WHERE idIngreso = {$idIngreso})))") or die(mysql_error());
 
 ?>
@@ -161,7 +177,7 @@ OR (iDeposito IS NOT NULL AND iDeposito IN (SELECT iDeposito FROM depositos WHER
           <h1> Seguimiento de Lote <?php echo $nlote; ?> </h1>
           <ul class="nav nav-tabs" algin="right">
           </ul>
-		  
+
           <?php
           if(isset($_GET['errordat'])){
           echo "
@@ -263,8 +279,8 @@ OR (iDeposito IS NOT NULL AND iDeposito IN (SELECT iDeposito FROM depositos WHER
 										<td> <?php echo $arrayProcesosEp['descripcion']; ?> </td>
 										<td> <?php echo $arrayProcesosEp['fecha']; ?> </td>
 										<td> <?php echo $arrayProcesosEp['cantidad']; ?> </td>
-										<td>  <a href="form_entrega.php?id=<?php echo $arrayProcesosEp['idProceso'];?>&tipo=proceso " role="button"  class="btn btn-info btn-primary btn-block"> Entregar </a></td>
-										<td>  <a href="form_desposito.php?id=<?php echo $arrayProcesosEp['idProceso'];?>&tipo=desposito " role="button"  class="btn btn-info btn-primary btn-block"> Despositar </a></td>
+										<td>  <a href="form_entrega.php?id=<?php echo $arrayProcesosEp['idProcesoEnEspera'];?>&tipo=procesoEnEspera " role="button"  class="btn btn-info btn-primary btn-block"> Entregar </a></td>
+										<td>  <a href="form_desposito.php?id=<?php echo $arrayProcesosEp['idProcesoEnEspera'];?>&tipo=procesoEnEspera " role="button"  class="btn btn-info btn-primary btn-block"> Despositar </a></td>
 										<?php if($_SESSION["permiso"] == 1) {?>
 										<td>  <a href="eliminar.php?id=<?php echo $arrayProcesosEp['idProceso'];?>&tipo=proceso " role="button"  class="btn btn-danger btn-primary btn-block"> Eliminar </a></td>
 										<?php }?>
