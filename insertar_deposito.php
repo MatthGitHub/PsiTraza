@@ -1,45 +1,58 @@
 <?php
 include('config.php');
-    $idLote = $_GET['idLote'];
+$idLote = $_GET['idLote'];
+$maxStock = $_GET['max'];
+$idProcesoEs = $_GET['idProcesoEs'];
 	// Primero comprobamos que ning�n campo est� vac�o y que todos los campos existan.
-    if(isset($_POST['idTipoProceso']) && !empty($_POST['idTipoProceso']) &&
-    isset($_POST['cantidad']) && !empty($_POST['cantidad'])){
-        // Si entramos es que todo se ha realizado correctamente
-
-		$tipo = $_POST['idTipoProceso'];
+  if(!empty($_POST['cantidad']) && ($_POST['cantidad'] <= $maxStock)
+	&& isset($_POST['txtFecha'])&& !empty($_POST['txtFecha'])){
+    // Si entramos es que todo se ha realizado correctamente
+		$fecha = $_POST['txtFecha'];
 		$cantidad = $_POST['cantidad'];
 
+    $anio =substr($fecha,0,5);
+    $mes =substr($fecha,6,8);
+    $dia =substr($fecha,8,10);
+    $anio = $anio + 1;
 
-		// Establecer la zona horaria predeterminada a usar. Disponible desde PHP 5.1
-		date_default_timezone_set('UTC');
-		//Imprimimos la fecha actual dandole un formato
-		$fecha = date("Y-m-d");
-		$anio = date("Y")+1;
-		$vencimiento = date("$anio-m-d");
+		$vencimiento ="{$anio}-{$mes}-{$dia}";
 
-        $link = mysqli_connect ($dbhost, $dbusername, $dbuserpass);
-        mysqli_select_db($link,$dbname);
+    $link = mysqli_connect ($dbhost, $dbusername, $dbuserpass);
+    mysqli_select_db($link,$dbname);
+
+    // Con esta sentencia SQL insertaremos los datos en la base de datos
+    mysqli_query($link,"INSERT INTO depositos (idProcesoEnEspera,fecha,vencimiento,cantidad) VALUES ('{$idProcesoEs}','{$fecha}','{$vencimiento}','{$cantidad}')");
+    //Comprobamos cantidad sobrante en proceso en espera -----------------------------------------------------------------------------------
+    //Buscamos la cantidad edl proceso entregado
+    $enEspera = mysqli_query($link,"SELECT cantidad FROM procesoenespera WHERE idProcesoEnEspera = '$idProcesoEs'");
+    $enEspera = mysqli_fetch_array($enEspera);
+    $cantProcEs = $enEspera['cantidad'];
+
+    //Le restamos lo entregado a la cantidad total
+    $total = $cantProcEs - $cantidad;
+
+    // Se actualiza el registro con la nueva cantidad sobrante.
+    mysqli_query($link,"UPDATE procesoenespera SET cantidad = '{$total}' WHERE idProcesoEnEspera = '$idProcesoEs'");
 
 
-        // Con esta sentencia SQL insertaremos los datos en la base de datos
-        mysqli_query($link,"INSERT INTO depositos (idLote,tipoProceso,fecha,vencimiento,cantidad) VALUES ('{$idLote}','{$tipo}','{$fecha}','{$vencimiento}','{$cantidad}')");
-        // Ahora comprobaremos que todo ha ido correctamente
-        $my_error = mysql_error($link);
 
-        if(!empty($my_error)) {
+    // Ahora comprobaremos que todo ha ido correctamente
+    $my_error = mysql_error($link);
 
-            header ("Location: form_deposito.php?errordat&numLote={$idLote}");
+    if(!empty($my_error)) {
 
-        } else {
-
-             header ("Location: seguimiento_lote.php?idLote={$idLote}");
-
-        }
+        header ("Location: form_deposito.php?errordat&idLote={$idLote}&max={$maxStock}&id={$idProcesoEs}");
 
     } else {
 
-         header ("Location: form_deposito.php?errordb&numLote={$idLote}");
+         header ("Location: seguimiento_lote.php?idLote={$idLote}");
 
     }
+
+} else {
+
+     header ("Location: form_deposito.php?errordb&idLote={$idLote}&max={$maxStock}&id={$idProcesoEs}");
+
+}
 
 ?>

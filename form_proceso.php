@@ -29,7 +29,7 @@ $idLote = $idLote['idLote'];
     <!-- Bootstrap -->
 	<link href="css/bootstrap.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-	<link href="css/bootstrap-datetimepicker.min.css" rel="stylesheet"> 
+	<link href="css/bootstrap-datetimepicker.min.css" rel="stylesheet">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -172,16 +172,16 @@ body
                     </div>
                  </div>
                     <div class="form-group">
-							<div class="input-group">
-                               <span class="input-group-addon"><span class="glyphicon glyphicon-stats"></span></span>
-                               <input name="cantidad" type="text" class="form-control"  id="cantidad" value="" placeholder="Cantidad en KG" />
-							</div>
-							<div class='input-group date' id='divMiCalendario'>
-							  <input name="txtFecha" type='text' id="txtFecha" class="form-control"  readonly/>
-							  <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
-							  </span>
-							</div>
-                       </div>
+        							<div class="input-group">
+                                       <span class="input-group-addon"><span class="glyphicon glyphicon-stats"></span>Max=<?php echo $maxStock; ?></span>
+                                       <input name="cantidad" type="text" class="form-control"  id="cantidad" value="" placeholder="Cantidad en KG" />
+        							</div>
+        							<div class='input-group date' id='divMiCalendario'>
+        							  <input name="txtFecha" type='text' id="txtFecha" class="form-control"  readonly/>
+        							  <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
+        							  </span>
+        							</div>
+                     </div>
 					   <input type="submit" name="Submit" value="Guardar"  class="btn btn-sm btn-primary btn-block">
 					</div>
 					</div>
@@ -237,13 +237,13 @@ echo "";
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="js/bootstrap.min.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
    <script src="js/moment.min.js"></script>
    <script src="js/bootstrap-datetimepicker.min.js"></script>
    <script src="js/bootstrap-datetimepicker.es.js"></script>
    <script type="text/javascript">
 	 $('#divMiCalendario').datetimepicker({
-		  format: 'YYYY-MM-DD'       
+		  format: 'YYYY-MM-DD'
 	  });
 	  $('#divMiCalendario').data("DateTimePicker").show();
    </script>

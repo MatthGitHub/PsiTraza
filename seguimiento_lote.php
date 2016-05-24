@@ -32,9 +32,16 @@ $tock = $cantProcesada - $cantEntregada;
 
 
 //Busco stock disponible para procesar -------------------------------------------------------------------------------------------------------------------------------------------------
-$tockQuery2 = mysqli_query($link,"SELECT (i.cantidad - SUM(p.cantidad)) AS cantidad FROM ingresos i JOIN procesos p ON i.idIngreso = p.idIngreso");
+//Busco la suma de la cantidad ingresada
+$cantIngresada = mysqli_query($link,"SELECT cantidad FROM ingresos WHERE idLote = '{$nlote}'");
+$cantIngresada = mysqli_fetch_array($cantIngresada);
+$cantIngresada = $cantIngresada['cantidad'];
+//Busco cantidad total procesada
+$tockQuery2 = mysqli_query($link,"SELECT SUM(p.cantidad) AS cantidad FROM ingresos i JOIN procesos p ON idLote = '{$nlote}'");
 $tockProcesa = mysqli_fetch_array($tockQuery2);
 $tockProcesa = $tockProcesa['cantidad'];
+//Calculo la diferencia restante que me dice cuanto queda para procesar
+$tockProcesa = $cantIngresada - $tockProcesa;
 
 //Este es por si el stock da null poque todavia no hay registro en  procesos
 if($tockProcesa == null){
@@ -67,12 +74,16 @@ $idProceso = mysqli_fetch_array($procesos2);
 $idProceso = $idProceso['idProceso'];
 
 //Busco todos los procesos en espera ---------------------------------------------------------------------------------------------------------------------------------------------------------
-$procesoEnEsperaQuery = mysqli_query($link,"SELECT * FROM procesoenespera pe JOIN procesos p ON pe.idProceso = p.idProceso JOIN tiposprocesos tp ON p.tipoProceso = tp.idTipoProceso WHERE idIngreso= {$idIngreso}");
+$procesoEnEsperaQuery = mysqli_query($link,"SELECT pe.idProceso,pe.fecha,pe.cantidad,pe.idProcesoEnEspera,tp.descripcion FROM procesoenespera pe JOIN procesos p ON pe.idProceso = p.idProceso JOIN tiposprocesos tp ON p.tipoProceso = tp.idTipoProceso WHERE idIngreso= {$idIngreso}");
+//Busco la cantidad total de los procesos en espera y si es 0 que no aparezca la tabla
+$procesoEnEsperaCant = mysqli_query($link,"SELECT SUM(pe.cantidad) AS cantidad FROM procesoenespera pe JOIN procesos p ON pe.idProceso = p.idProceso JOIN ingresos i ON i.idIngreso = p.idIngreso WHERE p.idIngreso= {$idIngreso}");
+$procesoEnEsperaCant = mysqli_fetch_array($procesoEnEsperaCant);
+$procesoEnEsperaCant = $procesoEnEsperaCant['cantidad'];
 
 //Con el id proceso busco depositos que correspondan a ese proceso -----------------------------------------------------------------------------------------------------------------------
-$depositos = mysqli_query($link,"SELECT * FROM depositos d JOIN procesos p ON d.idProceso = p.idProceso JOIN tiposprocesos tp ON tp.idTipoProceso = p.tipoProceso WHERE idIngreso ={$idIngreso}") or die(mysql_error());
+$depositos = mysqli_query($link,"SELECT d.iDeposito,d.IdProcesoEnEspera,d.fecha,d.vencimiento,d.cantidad,tp.descripcion,pe.idProceso FROM depositos d JOIN procesoenespera pe ON d.idProcesoEnEspera = pe.idProcesoEnEspera JOIN procesos p ON p.idProceso = pe.idProceso JOIN tiposprocesos tp ON tp.idTipoProceso = p.tipoProceso WHERE idIngreso ={$idIngreso}") or die(mysql_error());
 //Para buscar el ID
-$depositos2 = mysqli_query($link,"SELECT * FROM depositos d JOIN procesos p ON d.idProceso = p.idProceso JOIN tiposprocesos tp ON tp.idTipoProceso = p.tipoProceso WHERE idIngreso ={$idIngreso}") or die(mysql_error());
+$depositos2 = mysqli_query($link,"SELECT * FROM depositos d JOIN procesoenespera pe ON d.idProcesoEnEspera = pe.idProcesoEnEspera JOIN procesos p ON p.idProceso = pe.idProceso JOIN tiposprocesos tp ON tp.idTipoProceso = p.tipoProceso WHERE idIngreso ={$idIngreso}") or die(mysql_error());
 
 //Busco el iDeposito ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
 $iDeposito = mysqli_fetch_array($depositos2);
@@ -80,10 +91,12 @@ $iDeposito = $iDeposito['iDeposito'];
 
 //Busco las entregas que correspondan o al idDeposito o al idProceso ---------------------------------------------------------------------------------------------------------------------
 $entregas = mysqli_query($link,
-"SELECT *
-FROM entregas
-JOIN clientes
-ON cliente = idCliente
+"SELECT idEntrega,cliente,fichaExpedicion,e.idProcesoEnEspera,iDeposito,e.cantidad,e.fecha,nombre,idProceso
+FROM entregas e
+JOIN clientes c
+ON e.cliente = c.idCliente
+JOIN procesoenespera pe
+ON pe.idProcesoEnEspera = e.idProcesoEnEspera
 WHERE (idProceso IS NOT NULL AND idProceso IN (SELECT idProceso FROM procesos WHERE idIngreso = {$idIngreso}))
 OR (iDeposito IS NOT NULL AND iDeposito IN (SELECT iDeposito FROM depositos WHERE idProceso IN (SELECT idProceso FROM procesos WHERE idIngreso = {$idIngreso})))") or die(mysql_error());
 
@@ -231,7 +244,7 @@ OR (iDeposito IS NOT NULL AND iDeposito IN (SELECT iDeposito FROM depositos WHER
 						<div class="row">
 							<table class="table table-hover">
 								<h2> Procesos </h2>
-								<div align="center"><h3> Disponible para entrega: <?php echo $tock; ?> kg</h3></div>
+								<div align="center"><h3> Total procesado: <?php echo $tock; ?> kg</h3></div>
 								<thead>
 									<th> Nº Proceso </th>
 									<th> Tipo de Proceso </th>
@@ -256,8 +269,9 @@ OR (iDeposito IS NOT NULL AND iDeposito IN (SELECT iDeposito FROM depositos WHER
 							</table>
 						</div>
 					</div>
-					 <!--  ------------------------- TABLA PROCESOS EN ESPERA --------------------- -->
-					<?php if (mysqli_num_rows($procesoEnEsperaQuery)>0){ ?>
+
+					 <!--  ------------------------- TABLA PROCESOS EN ESPERA --------------------->
+					<?php if ((mysqli_num_rows($procesoEnEsperaQuery) > 0)&&($procesoEnEsperaCant > 0)){ ?>
 					<div class="jumbotron">
 						<div class="row">
 							<table class="table table-hover">
@@ -270,7 +284,6 @@ OR (iDeposito IS NOT NULL AND iDeposito IN (SELECT iDeposito FROM depositos WHER
 									<th> Cantidad en KG </th>
 									<th> Entregar </th>
 									<th> Despositar </th>
-									<?php if($_SESSION["permiso"] == 1) {?> <th> Eliminar </th> <?php }?>
 								</thead>
 								<tbody>
 									<?php while($arrayProcesosEp = mysqli_fetch_array($procesoEnEsperaQuery)){ ?>
@@ -279,11 +292,8 @@ OR (iDeposito IS NOT NULL AND iDeposito IN (SELECT iDeposito FROM depositos WHER
 										<td> <?php echo $arrayProcesosEp['descripcion']; ?> </td>
 										<td> <?php echo $arrayProcesosEp['fecha']; ?> </td>
 										<td> <?php echo $arrayProcesosEp['cantidad']; ?> </td>
-										<td>  <a href="form_entrega.php?id=<?php echo $arrayProcesosEp['idProcesoEnEspera'];?>&tipo=procesoEnEspera " role="button"  class="btn btn-info btn-primary btn-block"> Entregar </a></td>
-										<td>  <a href="form_desposito.php?id=<?php echo $arrayProcesosEp['idProcesoEnEspera'];?>&tipo=procesoEnEspera " role="button"  class="btn btn-info btn-primary btn-block"> Despositar </a></td>
-										<?php if($_SESSION["permiso"] == 1) {?>
-										<td>  <a href="eliminar.php?id=<?php echo $arrayProcesosEp['idProceso'];?>&tipo=proceso " role="button"  class="btn btn-danger btn-primary btn-block"> Eliminar </a></td>
-										<?php }?>
+										<td>  <a href="form_entrega.php?id=<?php echo $arrayProcesosEp['idProcesoEnEspera'];?>&max=<?php echo $arrayProcesosEp['cantidad'];?>&idLote=<?php echo $nlote;?>&tipo=proceso" role="button"  class="btn btn-info btn-primary btn-block"> Entregar </a></td>
+										<td>  <a href="form_deposito.php?id=<?php echo $arrayProcesosEp['idProcesoEnEspera'];?>&max=<?php echo $arrayProcesosEp['cantidad']; ?>&idLote=<?php echo $nlote;?>" role="button"  class="btn btn-info btn-primary btn-block"> Despositar </a></td>
 									</tr>
 									<?php } ?>
 								</tbody>
@@ -291,12 +301,50 @@ OR (iDeposito IS NOT NULL AND iDeposito IN (SELECT iDeposito FROM depositos WHER
 							</table>
 						</div>
 					</div>
+					<!--  ------------------------- TABLA ENTREGAS --------------------- -->
+				 <?php if (mysqli_num_rows($entregas)>0){ ?>
+				 <div class="jumbotron">
+					 <div class="row">
+						 <table class="table table-hover">
+							 <h3> Entrega </h3>
+							 	<div align="center"><h3> Total entregado: <?php  ?> kg</h3></div>
+							 <thead>
+								 <td> Num Deposito </td>
+								 <td> Num Proceso </td>
+								 <th> Tipo de Proceso </th>
+								 <th> Cantidad en KG </th>
+								 <th> Fecha </th>
+								 <th> Ficha Exp </th>
+								 <th> Cliente </th>
+								 <?php if($_SESSION["permiso"] == 1) {?> <th> Eliminar </th> <?php }?>
+							 </thead>
+							 <tbody>
+								 <?php while($arrayEntregas = mysqli_fetch_array($entregas)){ ?>
+								 <tr class="success">
+									 <td> <?php if($arrayEntregas['iDeposito'] != NULL){ echo $arrayEntregas['iDeposito'];}else{ echo " --- ";} ?> </td>
+									 <td> <?php if($arrayEntregas['idProceso'] != NULL){ echo $arrayEntregas['idProceso'];}else{ echo " --- ";} ?> </td>
+									 <td> <?php echo $arrayEntregas['descripcion']; ?> </td>
+									 <td> <?php echo $arrayEntregas['cantidad']; ?> </td>
+									 <td> <?php echo $arrayEntregas['fecha']; ?> </td>
+									 <td> <?php echo $arrayEntregas['fichaExpedicion']; ?> </td>
+									 <td> <?php echo $arrayEntregas['nombre']; ?> </td>
+									 <?php if($_SESSION["permiso"] == 1) {?>
+									 <td>  <a href="eliminar.php?id=<?php echo $arrayEntregas['idEntrega'];?>&tipo=entrega " role="button"  class="btn btn-danger btn-primary btn-block"> Eliminar </a></td>
+									 <?php }?>
+								 </tr>
+								 <?php } ?>
+							 </tbody>
+				 <?php } ?>
+						 </table>
+					 </div>
+				 </div>
 					 <!--  ------------------------- TABLA DEPOSITOS --------------------- -->
 					<?php if (mysqli_num_rows($depositos)>0){ ?>
 					<div class="jumbotron">
 						<div class="row">
 							<table class="table table-hover">
 								<h3> Deposito </h3>
+								<div align="center"><h3> Total depositado: <?php  ?> kg</h3></div>
 								<thead>
 									<th> Tipo de Proceso </th>
 									<th> Fecha </th>
@@ -312,7 +360,7 @@ OR (iDeposito IS NOT NULL AND iDeposito IN (SELECT iDeposito FROM depositos WHER
 										<td> <?php echo $arrayDepositos['fecha']; ?> </td>
 										<td> <?php echo $arrayDepositos['vencimiento']; ?> </td>
 										<td> <?php echo $arrayDepositos['cantidad']; ?> </td>
-										<td>  <a href="form_entrega.php?id=<?php echo $arrayDepositos['iDeposito'];?>&tipo=deposito " role="button"  class="btn btn-info btn-primary btn-block"> Entregar </a></td>
+										<td>  <a href="form_entrega.php?id=<?php echo $arrayDepositos['iDeposito'];?>&tipo=deposito&max=<?php echo $arrayDepositos['cantidad'];?>&idLote=<?php echo $nlote;?> " role="button"  class="btn btn-info btn-primary btn-block"> Entregar </a></td>
 										<?php if($_SESSION["permiso"] == 1) {?>
 										<td>  <a href="eliminar.php?id=<?php echo $arrayDepositos['iDeposito'];?>&tipo=deposito " role="button"  class="btn btn-danger btn-primary btn-block"> Eliminar </a></td>
 										<?php }?>
@@ -323,44 +371,6 @@ OR (iDeposito IS NOT NULL AND iDeposito IN (SELECT iDeposito FROM depositos WHER
 							</table>
 						</div>
 					</div>
-					 <!--  ------------------------- TABLA ENTREGAS --------------------- -->
-					<?php if (mysqli_num_rows($entregas)>0){ ?>
-					<div class="jumbotron">
-						<div class="row">
-							<table class="table table-hover">
-								<h3> Entrega </h3>
-								<thead>
-									<td> Num Deposito </td>
-									<td> Num Proceso </td>
-									<th> Tipo de Proceso </th>
-									<th> Cantidad en KG </th>
-									<th> Fecha </th>
-									<th> Ficha Exp </th>
-									<th> Cliente </th>
-									<?php if($_SESSION["permiso"] == 1) {?> <th> Eliminar </th> <?php }?>
-								</thead>
-								<tbody>
-									<?php while($arrayEntregas = mysqli_fetch_array($entregas)){ ?>
-									<tr class="success">
-										<td> <?php if($arrayEntregas['iDeposito'] != NULL){ echo $arrayEntregas['iDeposito'];}else{ echo " --- ";} ?> </td>
-										<td> <?php if($arrayEntregas['idProceso'] != NULL){ echo $arrayEntregas['idProceso'];}else{ echo " --- ";} ?> </td>
-										<td> <?php echo $arrayEntregas['descripcion']; ?> </td>
-										<td> <?php echo $arrayEntregas['cantidad']; ?> </td>
-										<td> <?php echo $arrayEntregas['fecha']; ?> </td>
-										<td> <?php echo $arrayEntregas['fichaExpedicion']; ?> </td>
-										<td> <?php echo $arrayEntregas['nombre']; ?> </td>
-										<?php if($_SESSION["permiso"] == 1) {?>
-										<td>  <a href="eliminar.php?id=<?php echo $arrayEntregas['idEntrega'];?>&tipo=entrega " role="button"  class="btn btn-danger btn-primary btn-block"> Eliminar </a></td>
-										<?php }?>
-									</tr>
-									<?php } ?>
-								</tbody>
-					<?php } ?>
-							</table>
-						</div>
-					</div>
-
-
     </div> <!-- /container -->
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
