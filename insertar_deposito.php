@@ -10,12 +10,8 @@ $idProcesoEs = $_GET['idProcesoEs'];
 		$fecha = $_POST['txtFecha'];
 		$cantidad = $_POST['cantidad'];
 
-    $anio =substr($fecha,0,5);
-    $mes =substr($fecha,6,8);
-    $dia =substr($fecha,8,10);
-    $anio = $anio + 1;
-
-		$vencimiento ="{$anio}-{$mes}-{$dia}";
+    $vencimiento = strtotime ( '+1 year' , strtotime ( $fecha ) ) ;
+    $vencimiento = date ( 'Y-m-j' , $vencimiento );
 
     $link = mysqli_connect ($dbhost, $dbusername, $dbuserpass);
     mysqli_select_db($link,$dbname);

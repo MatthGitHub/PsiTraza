@@ -35,23 +35,34 @@ $flag = 0;
 
 		//Si el id que obtenemos por post es de ingreso tambien se borra el Lote
 		if($tipo == 'ingreso'){
-			$qexiste = mysqli_query($link,"SELECT id_lote,idIngreso,iDeposito,idEntrega,idProceso
+			//Busco el id lote para la pagina seguimiento de lote
+			$ingreso = mysqli_query($link,"SELECT idLote FROM ingresos WHERE idIngreso='$id'") or die(mysql_error());
+			$idLote = mysqli_fetch_array($ingreso);
+			$idLote = $idLote['idLote'];
+			// Busco si el lote tiene procesos, entregas o depositos
+			$qexiste = mysqli_query($link,"SELECT id_lote,i.idIngreso,d.iDeposito,idEntrega,p.idProceso
 					FROM lotes l
-					LEFT JOIN depositos d ON d.idLote = l.id_lote
-					LEFT JOIN entregas e ON e.idLote = id_lote
-					LEFT JOIN procesos p ON p.idLote = id_lote
 					LEFT JOIN ingresos i ON i.idLote = id_lote
-					WHERE idIngreso = $id AND (iDeposito IS NOT NULL OR idEntrega IS NOT NULL OR idProceso IS NOT NULL)") or die(mysql_error());
-			$existe = mysqli_fetch_array($qexiste);
+					LEFT JOIN procesos p ON p.idIngreso = i.idIngreso
+					LEFT JOIN procesoenespera pe ON p.idProceso = pe.idProceso
+					LEFT JOIN entregas e ON e.idProcesoEnEspera = pe.idProcesoEnEspera
+					LEFT JOIN depositos d ON d.idProcesoEnEspera = pe.idProcesoEnEspera
+					WHERE i.idIngreso = $id AND (d.iDeposito IS NOT NULL OR e.idEntrega IS NOT NULL OR p.idProceso IS NOT NULL)") or die(mysql_error());
+			$cantRows = mysqli_num_rows($qexiste);
 
-			if(mysqli_num_rows($qexiste) == 0){
+			//Si el resultado es mayor a 0 significa que tiene procesos o depositos o entregas y no se puede eliminar hasta que no se elminen esos
+			if($cantRows == 0){
+				//Busco el id lote para la pagina seguimiento de lote
 				$ingreso = mysqli_query($link,"SELECT idLote FROM ingresos WHERE idIngreso='$id'") or die(mysql_error());
 				$idLote = mysqli_fetch_array($ingreso);
 				$idLote = $idLote['idLote'];
+				//Borro el ingreso
 				$queEmp = "DELETE FROM ingresos WHERE idLote='$idLote'";
 				$resEmp = mysqli_query($link,$queEmp) or die(mysql_error());
+				//Borro el lote
 				$queEmp = "DELETE FROM lotes WHERE id_lote='$idLote'";
 				$resEmp = mysqli_query($link,$queEmp) or die(mysql_error());
+				//Pongo la bandera en uno para avisar que se borro y vaya a otra pagina
 				$flag = 1;
 			}
 
@@ -60,30 +71,79 @@ $flag = 0;
 		//Si el id que obtenemos por post es de entrega
 		//Si se elimina la entrega hay que devolverle su cantidad original al proceso en espera
 		if($tipo == 'entrega'){
-			//Buscamos el id Lote para volver al seguimiento de lote con ese lote
-			$entrega = mysqli_query($link,"SELECT idLote FROM entregas e JOIN procesoenespera pe ON e.idProcesoEnEspera = pe.idProcesoEnEspera JOIN procesos p ON p.idProceso = pe.idProceso JOIN ingresos i ON i.idIngreso = p.idIngreso WHERE idEntrega='$id'") or die(mysql_error());
+			//Buscamos el id Lote para volver al seguimiento de lote con el vigente
+			$entrega = mysqli_query($link,"	SELECT idLote
+																			FROM entregas e
+																			JOIN procesoenespera pe ON e.idProcesoEnEspera = pe.idProcesoEnEspera
+																			JOIN procesos p ON p.idProceso = pe.idProceso
+																			JOIN ingresos i ON i.idIngreso = p.idIngreso
+																			WHERE idEntrega={$id}
+																			UNION ALL
+																			SELECT idLote
+																			FROM entregas e
+																			JOIN depositos d ON e.iDeposito = d.iDeposito
+																			JOIN procesoenespera pe ON d.idProcesoEnEspera = pe.idProcesoEnEspera
+																			JOIN procesos p ON p.idProceso = pe.idProceso
+																			JOIN ingresos i ON i.idIngreso = p.idIngreso
+																			WHERE idEntrega={$id}") or die(mysql_error());
 			$idLote = mysqli_fetch_array($entrega);
 			$idLote = $idLote['idLote'];
-			//Buscamos el id del proceso en espera
-			$idProcesoEs = mysqli_query($link,"SELECT idProcesoEnEspera FROM entregas WHERE idEntrega='$id'") or die(mysql_error());
-			$idProcesoEs = mysqli_fetch_array($idProcesoEs);
-			$idProcesoEs = $idProcesoEs['idProcesoEnEspera'];
-			//Buscamos la cantidad a devolverle al proceso en espera
-			$cantidad = mysqli_query($link,"SELECT cantidad FROM entregas WHERE idEntrega='$id'") or die(mysql_error());
-			$cantidad = mysqli_fetch_array($cantidad);
-			$cantidad = $cantidad['cantidad'];
-			//Buscamos la cantidad actual del proceso
-			$proCant = mysqli_query($link,"SELECT cantidad FROM procesoenespera WHERE idProcesoEnEspera = '$idProcesoEs'");
-			$proCant = mysqli_fetch_array($proCant);
-			$proCant = $proCant['cantidad'];
-			//Sumo las cantidades para volver a la que teniamos
-			$cantidad = $cantidad + $proCant;
-			//Borramos el registro de entregas
-			$queEmp = "DELETE FROM entregas WHERE idEntrega='$id'";
-			$resEmp = mysqli_query($link,$queEmp) or die(mysql_error());
-			//Hacemos update del registro del proceso en espera al que pertenecia para devolverle su cantidad
-			mysqli_query($link,"UPDATE procesoenespera SET cantidad = '{$cantidad}'");
+			//Nos fijamos si la entrega poroviene del proceso en espera o de un deposito	-----------------------------------------------------------------
+
+			//Verificamos si viene de proceso en espera
+			$verifProc = mysqli_query($link,"SELECT idProcesoEnEspera FROM entregas WHERE idEntrega = {$id}");
+			$verifProc =mysqli_fetch_array($verifProc);
+			$verifProc = $verifProc['idProcesoEnEspera'];
+			if($verifProc != NULL){
+				//Buscamos el id del proceso en espera
+				$idProcesoEs = mysqli_query($link,"SELECT idProcesoEnEspera FROM entregas WHERE idEntrega='$id'") or die(mysql_error());
+				$idProcesoEs = mysqli_fetch_array($idProcesoEs);
+				$idProcesoEs = $idProcesoEs['idProcesoEnEspera'];
+				//Buscamos la cantidad a devolverle al proceso en espera
+				$cantidad = mysqli_query($link,"SELECT cantidad FROM entregas WHERE idEntrega='$id'") or die(mysql_error());
+				$cantidad = mysqli_fetch_array($cantidad);
+				$cantidad = $cantidad['cantidad'];
+				//Buscamos la cantidad actual del proceso
+				$proCant = mysqli_query($link,"SELECT cantidad FROM procesoenespera WHERE idProcesoEnEspera = '$idProcesoEs'");
+				$proCant = mysqli_fetch_array($proCant);
+				$proCant = $proCant['cantidad'];
+				//Sumo las cantidades para volver a la que teniamos
+				$cantidad = $cantidad + $proCant;
+				//Borramos el registro de entregas
+				$queEmp = "DELETE FROM entregas WHERE idEntrega='$id'";
+				$resEmp = mysqli_query($link,$queEmp) or die(mysql_error());
+				//Hacemos update del registro del proceso en espera al que pertenecia para devolverle su cantidad
+				mysqli_query($link,"UPDATE procesoenespera SET cantidad = '{$cantidad}' WHERE idProcesoEnEspera = {$idProcesoEs}");
+			}
+
+			// Verificamos si viene de deposito
+			$verifDep = mysqli_query($link,"SELECT iDeposito FROM entregas WHERE idEntrega = {$id}");
+			$verifDep =mysqli_fetch_array($verifDep);
+			$verifDep = $verifDep['iDeposito'];
+			if($verifDep != NULL){
+				//Buscamos el id del deposito
+				$idProcesoDep = mysqli_query($link,"SELECT iDeposito FROM entregas WHERE idEntrega='$id'") or die(mysql_error());
+				$idProcesoDep = mysqli_fetch_array($idProcesoDep);
+				$idProcesoDep = $idProcesoDep['iDeposito'];
+				//Buscamos la cantidad a devolverle al proceso en espera
+				$cantidad = mysqli_query($link,"SELECT cantidad FROM entregas WHERE idEntrega='$id'") or die(mysql_error());
+				$cantidad = mysqli_fetch_array($cantidad);
+				$cantidad = $cantidad['cantidad'];
+				//Buscamos la cantidad actual del proceso
+				$depCant = mysqli_query($link,"SELECT cantidad FROM depositos WHERE iDeposito = '$idProcesoDep'");
+				$depCant = mysqli_fetch_array($depCant);
+				$depCant = $depCant['cantidad'];
+				//Sumo las cantidades para volver a la que teniamos
+				$cantidad = $cantidad + $depCant;
+				//Borramos el registro de entregas
+				$queEmp = "DELETE FROM entregas WHERE idEntrega='$id'";
+				$resEmp = mysqli_query($link,$queEmp) or die(mysql_error());
+				//Hacemos update del registro del proceso en espera al que pertenecia para devolverle su cantidad
+				mysqli_query($link,"UPDATE depositos SET cantidad = '{$cantidad}' WHERE iDeposito = {$idProcesoDep}");
+			}
+
 		}
+
 		//Si el id que obtenemos por post es de deposito
 		if($tipo == 'deposito'){
 			//Buscamos el id lote para volver al seguimmiento del lote con este lote
@@ -108,15 +168,29 @@ $flag = 0;
 			$queEmp = "DELETE FROM depositos WHERE iDeposito='$id'";
 			$resEmp = mysqli_query($link,$queEmp) or die(mysql_error());
 			//Hacemos update del registro del proceso en espera al que pertenecia para devolverle su cantidad
-			mysqli_query($link,"UPDATE procesoenespera SET cantidad = '{$cantidad}'");
+			mysqli_query($link,"UPDATE procesoenespera SET cantidad = '{$cantidad}' WHERE idProcesoEnEspera = {$idProcesoEs}");
 		}
+
 		//Si el id que obtenemos por post es de proceso
 		if($tipo == 'proceso'){
 			$proceso = mysqli_query($link,"SELECT idLote FROM procesos p JOIN ingresos i ON p.idIngreso = i.idIngreso WHERE idProceso='$id'") or die(mysql_error());
 			$idLote = mysqli_fetch_array($proceso);
 			$idLote = $idLote['idLote'];
-			$queEmp = "DELETE FROM procesos WHERE idProceso='$id'";
-			$resEmp = mysqli_query($link,$queEmp) or die(mysql_error());
+
+			//Verificar si el proceso ya posee depositos
+			$verifDep = mysqli_query($link,"SELECT * FROM procesos p JOIN procesoenespera pe ON p.idProceso = pe.idProceso JOIN depositos d On d.IdProcesoEnEspera = pe.idProcesoEnEspera WHERE p.idProceso = {$id}");
+			$verifDep = mysqli_num_rows($verifDep);
+			//Verificar si el proceso ya posee entregas
+			$verifEnt = mysqli_query($link,"SELECT * FROM procesos p JOIN procesoenespera pe ON p.idProceso = pe.idProceso JOIN entregas e On e.IdProcesoEnEspera = pe.idProcesoEnEspera WHERE p.idProceso = {$id}");
+			$verifEnt = mysqli_num_rows($verifEnt);
+
+			if(($verifDep == 0)&&($verifEnt == 0)){
+				$queEmp = "DELETE FROM procesos WHERE idProceso='$id'";
+				$resEmp = mysqli_query($link,$queEmp) or die(mysql_error());
+				$flag = 1;
+			}
+
+
 		}
 
         // Ahora comprobaremos que todo ha ido correctamente
@@ -164,13 +238,16 @@ $flag = 0;
 	            	header ("Location: inicio.php");
 				}
 				if(($tipo == 'ingreso')&&($flag == 0)){
-	            	header ("Location: seguimiento_lote.php?errordat");
+	            	header ("Location: seguimiento_lote.php?errordat&idLote={$idLote}");
 				}
 				if($tipo == 'deposito'){
 	            	header ("Location: seguimiento_lote.php?idLote={$idLote}");
 				}
-				if($tipo == 'proceso'){
+				if(($tipo == 'proceso')&&($flag == 1)){
 	            	header ("Location: seguimiento_lote.php?idLote={$idLote}");
+				}
+				if(($tipo == 'proceso')&&($flag == 0)){
+	            	header ("Location: seguimiento_lote.php?errordat&idLote={$idLote}");
 				}
 				if($tipo == 'entrega'){
 	            	header ("Location: seguimiento_lote.php?idLote={$idLote}");

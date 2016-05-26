@@ -23,8 +23,8 @@ $tipo = $_GET['tipo'];
 				if($tipo == 'proceso'){
 						mysqli_query($link,"INSERT INTO entregas (cliente,fichaExpedicion,idProcesoEnEspera,cantidad,fecha) VALUES ('{$cliente}','{$expedicion}','{$idProcesoDep}','{$cantidad}','{$fecha}')");
 				}
-				if($tipo == 'desposito'){
-						mysqli_query($link,"INSERT INTO entregas (cliente,fichaExpedicion,idDeposito,cantidad,fecha) VALUES ('{$cliente}','{$expedicion}','{$idProcesoDep}','{$cantidad}','{$fecha}')");
+				if($tipo == 'deposito'){
+						mysqli_query($link,"INSERT INTO entregas (cliente,fichaExpedicion,iDeposito,cantidad,fecha) VALUES ('{$cliente}','{$expedicion}','{$idProcesoDep}','{$cantidad}','{$fecha}')");
 				}
 
 				//Comprobamos cantidad sobrante en proceso en espera -----------------------------------------------------------------------------------
@@ -51,7 +51,7 @@ $tipo = $_GET['tipo'];
 					$total = $cantDepo - $cantidad;
 
 					// Se actualiza el registro con la nueva cantidad sobrante.
-					mysqli_query($link,"UPDATE depositos SET cantidad = '{$total}' WHERE idProcesoEnEspera = '$idProcesoDep'");
+					mysqli_query($link,"UPDATE depositos SET cantidad = '{$total}' WHERE iDeposito = '$idProcesoDep'");
 				}
 
 
