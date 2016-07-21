@@ -94,7 +94,7 @@ $flag = 0;
 			$verifProc = mysqli_query($link,"SELECT idProcesoEnEspera FROM entregas WHERE idEntrega = {$id}");
 			$verifProc =mysqli_fetch_array($verifProc);
 			$verifProc = $verifProc['idProcesoEnEspera'];
-			if($verifProc != NULL){
+			if($verifProc != 0){
 				//Buscamos el id del proceso en espera
 				$idProcesoEs = mysqli_query($link,"SELECT idProcesoEnEspera FROM entregas WHERE idEntrega='$id'") or die(mysql_error());
 				$idProcesoEs = mysqli_fetch_array($idProcesoEs);
@@ -120,7 +120,7 @@ $flag = 0;
 			$verifDep = mysqli_query($link,"SELECT iDeposito FROM entregas WHERE idEntrega = {$id}");
 			$verifDep =mysqli_fetch_array($verifDep);
 			$verifDep = $verifDep['iDeposito'];
-			if($verifDep != NULL){
+			if($verifDep != 0){
 				//Buscamos el id del deposito
 				$idProcesoDep = mysqli_query($link,"SELECT iDeposito FROM entregas WHERE idEntrega='$id'") or die(mysql_error());
 				$idProcesoDep = mysqli_fetch_array($idProcesoDep);
