@@ -24,7 +24,7 @@ $juliano= gregoriantojd (4,28,2016);
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-	<link href="css/bootstrap-datetimepicker.min.css" rel="stylesheet"> 
+	<link href="css/bootstrap-datetimepicker.min.css" rel="stylesheet">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -109,11 +109,12 @@ body
                             </select>
                         </div>
                     </div>
-                 </div>
-				<div class='input-group date' id='divMiCalendario'>
+                    <div class="form-group">
+                  <div class='input-group date' id='divMiCalendario'>
                       <input name="txtFecha" type='text' id="txtFecha" class="form-control"  readonly/>
                       <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
                       </span>
+                  </div>
                   </div>
                  <div class="form-group">
                         <div class="input-group">
@@ -136,6 +137,7 @@ body
                 <input type="submit" name="Submit" value="Registrar"  class="btn btn-sm btn-primary btn-block">
  </form>
             </div>
+			</div>
                      <?php
 if(isset($_GET['sucess'])){
 echo "
@@ -194,7 +196,7 @@ echo "";
    <script src="js/bootstrap-datetimepicker.es.js"></script>
    <script type="text/javascript">
 	 $('#divMiCalendario').datetimepicker({
-		  format: 'YYYY-MM-DD'       
+		  format: 'YYYY-MM-DD'
 	  });
 	  $('#divMiCalendario').data("DateTimePicker").show();
    </script>

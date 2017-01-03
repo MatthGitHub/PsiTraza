@@ -8,7 +8,7 @@ exit;
 // Conectar a la base de datos
 $link = mysqli_connect ($dbhost, $dbusername, $dbuserpass);
 mysqli_select_db($link,$dbname) or die('No se puede seleccionar la base de datos');
-$query = mysqli_query($link,"SELECT * FROM lotes JOIN proveedores ON proveedor = idProveedor JOIN ingresos ON id_lote = idLote") or die(mysql_error());
+$query = mysqli_query($link,"SELECT * FROM lotes JOIN proveedores ON proveedor = idProveedor JOIN ingresos ON id_lote = idLote ORDER BY fecha DESC") or die(mysql_error());
 
 
 ?>
@@ -23,6 +23,12 @@ $query = mysqli_query($link,"SELECT * FROM lotes JOIN proveedores ON proveedor =
 
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap.css" rel="stylesheet">
+		<link href="css/jquery.dataTables.min.css" rel="stylesheet">
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script language='javascript' src="js/jquery-1.12.3.js"></script>
+    <script language='javascript' src="js/jquery.dataTables.min.js"></script>
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -30,6 +36,14 @@ $query = mysqli_query($link,"SELECT * FROM lotes JOIN proveedores ON proveedor =
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <script type="text/javascript">
+    $(document).ready(function() {
+    $('#example').DataTable( {
+        "scrollY":        "500px",
+        "scrollCollapse": true
+          } );
+      } );
+    </script>
   </head>
   <style type="text/css">
   body{background: #000;}
@@ -116,20 +130,20 @@ $query = mysqli_query($link,"SELECT * FROM lotes JOIN proveedores ON proveedor =
       </div>
       <!-- Main component for a primary marketing message or call to action -->
       <div class="jumbotron">
-<div class="row">
-              <table class="table table-hover">
+        <div class="row">
+                <table id="example" class="display" cellspacing="0" width="100%">
                 	<thead>
                     	<th> Numero de lote </th>
                         <th> Poveedor </th>
-						<th> Fecha Ingreso </th>
-						<th> Buscar </th>
+            						<th> Fecha Ingreso </th>
+            						<th> Buscar </th>
                     </thead>
                     <tbody>
                     	<?php while($lotes = mysqli_fetch_array($query)){ ?>
                         <tr class="success">
                             <td> <?php echo $lotes['id_lote']; ?> </td>
                             <td> <?php echo $lotes['nombre']; ?> </td>
-							<td> <?php echo $lotes['fecha']; ?> </td>
+                            <td> <?php echo $lotes['fecha']; ?> </td>
 							<td>  <a href="seguimiento_lote.php?idLote=<?php echo $lotes['idLote'];?>" role="button"  class="btn btn-info btn-primary btn-block"> Buscar </a></td>
                         </tr>
                         <?php } ?>
@@ -140,10 +154,5 @@ $query = mysqli_query($link,"SELECT * FROM lotes JOIN proveedores ON proveedor =
       </div>
 
     </div> <!-- /container -->
-
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="js/bootstrap.min.js"></script>
   </body>
 </html>

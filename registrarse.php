@@ -177,9 +177,9 @@ body
                                 <option value="1">Administrador</option>
                             </select>
                         </div>
-						<input type="submit" name="Submit" value="Registrarse"  class="btn btn-sm btn-primary btn-block">
-                    </div>
 
+                    </div>
+                    <input type="submit" name="Submit" value="Registrarse"  class="btn btn-sm btn-primary btn-block">
                 </div>
  </form>
             </div>

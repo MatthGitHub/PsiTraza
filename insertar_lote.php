@@ -10,17 +10,18 @@ include('config.php');
     $nIngreso = (string) $_POST['nIngreso'];
     $idProveedor = $_POST['idProveedor'];
 		$idLote = $_POST['idLote'];
-    $anio = (string) substr(date("y"),1);
+    $fecha = $_POST['txtFecha'];
+    $anio = (string) substr($fecha,3,1);
     $idProveedor = (string)$idProveedor;
     $idLote = (string) $idLote;
     $idLote = $idLote.$anio.$idProveedor.$nIngreso;
     $cantidad = $_POST['cantidad'];
-	$fecha = $_POST['txtFecha'];
+    
     if(strpos($cantidad,',') > 0){
       $cantidad = number_format($cantidad,0,",",".");
     }
 
-    
+
 
         $link = mysqli_connect ($dbhost, $dbusername, $dbuserpass);
         mysqli_select_db($link,$dbname);
